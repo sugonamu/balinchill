@@ -1,4 +1,4 @@
-##**List of group member names**
+## **List of group member names**
 Made Izzy Prema Darma
 Damar Aryaputra Rahman
 Serafina Nala Tri Setiawan
@@ -6,7 +6,7 @@ William Samuel Mulya
 Zakiy Makarim Iskandar Daulay
 Muhammad Brian Subekti
 
-##**Link to the APK**
+## **Link to the APK**
 Coming Soon !
 
 ## **Application description**
