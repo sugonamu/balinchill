@@ -1,10 +1,10 @@
 ## **List of group member names**
-Made Izzy Prema Darma
-Damar Aryaputra Rahman
-Serafina Nala Tri Setiawan
-William Samuel Mulya
-Zakiy Makarim Iskandar Daulay
-Muhammad Brian Subekti
+Made Izzy Prema Darma <br>
+Damar Aryaputra Rahman <br> 
+Serafina Nala Tri Setiawan <br>
+William Samuel Mulya <br>
+Zakiy Makarim Iskandar Daulay <br>
+Muhammad Brian Subekti <br>
 
 ## **Link to the APK**
 Coming Soon !
