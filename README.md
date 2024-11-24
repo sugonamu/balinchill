@@ -18,13 +18,13 @@ The main users of this platform are global travelers seeking a simpler, more per
 
 The website helps travelers by providing detailed property descriptions, user reviews, and an easy-to-navigate booking process, allowing them to plan their trips effortlessly. For hosts, the platform offers a streamlined way to manage bookings, promote their accommodations, and engage directly with guests, leading to increased opportunities for income and visibility.
 
-##**List of modules implemented and division of work among group members**
-* Hotel management module ( can be accessed by host), Host can make a new listing, see which of their listing are booked
-* Booking module (can be accessed by customer), here customer can see all the listing, sort, search, and filter by categories
-* Payment module (accesed by customer) this is where customer can do their payment
-* Rating module (accesed by customer) this is where customer can rate hotels
-* Authentication module ( this is where login, register and stuff)
-* User profile module ( accesed by customer) this is where user can customize their profile.
+## **List of modules implemented and division of work among group members**
+* Hotel management module ( can be accessed by host), Host can make a new listing, see which of their listing are booked (William)
+* Booking module (can be accessed by customer), here customer can see all the listing, sort, search, and filter by categories (Brian)
+* Payment module (accesed by customer) this is where customer can do their payment (Damar)
+* Rating module (accesed by customer) this is where customer can rate hotels (Zakiy)
+* Authentication module ( this is where login, register and stuff) (Nala)
+* User profile module ( accesed by customer) this is where user can customize their profile. (Izzy)
 
 ## **User roles and their descriptions**
 
@@ -41,4 +41,31 @@ Hosts are property owners who list their accommodations on the platform. Their k
 - **Respond to Inquiries**: Communicate with potential guests regarding property details, availability, and bookings.
 - **View Bookings**: Monitor reservations made by guests and manage the booking calendar.
 
-##**Integration with the web service to connect to the web application created in the midterm project**
+## **Integration with the web service to connect to the web application created in the midterm project**
+
+Integration with Web Service
+This application integrates a Flutter mobile frontend with a Django backend web application created during the midterm project. The integration is achieved through a RESTful web service, allowing the mobile app to fetch, display, and send data dynamically.
+
+**Integration Details**
+
+1. Backend:
+
+* The Django backend serves as the web service, exposing REST API endpoints using the Django REST Framework (DRF).
+* Data is exchanged in JSON format, with endpoints handling HTTP methods such as:
+  * GET: To fetch data.
+  * POST: To create new records.
+  * PUT: To update existing records.
+  * DELETE: To remove records.
+
+2. Frontend:
+
+* The Flutter mobile application acts as the client, consuming the REST API provided by the backend.
+* The http package is used in Flutter to send HTTP requests and handle responses from the backend.
+
+3. Key Features:
+
+* Fetching Data: The app retrieves JSON data using the GET method and maps it to Flutter model classes.
+* Sending Data: The app converts data into JSON format using toJson methods for POST and PUT requests.
+* Dynamic Display: Data fetched from the backend is parsed and displayed using widgets like ListView and FutureBuilder.
+
+
