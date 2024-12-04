@@ -68,4 +68,20 @@ This application integrates a Flutter mobile frontend with a Django backend web 
 * Sending Data: The app converts data into JSON format using toJson methods for POST and PUT requests.
 * Dynamic Display: Data fetched from the backend is parsed and displayed using widgets like ListView and FutureBuilder.
 
+**Profile Feature**
 
+***1. Viewing User Profiles***
+
+***Feature***: Display a list of user profiles with details such as username, email, first name, last name, and profile picture.
+
+***API Endpoint***: ```GET /users/profiles/``` (REST API)
+
+***Description***: This endpoint retrieves a list of all user profiles. The ProfilePage in viewprofile.dart fetches this data using the fetchProfiles method and displays it in a list.
+
+***2. Editing User Profiles***
+   
+***Feature***: Allow users to edit their profile information, including username, email, first name, last name, and profile picture. For the profile picutre, the user will be given a few choiches of predetermined images and they can choose which one they want to pick as their profile picture.
+
+***API Endpoint***: ```POST /users/update_profile_flutter/``` (REST API)
+
+***Description***: This endpoint updates the user's profile information. The EditProfilePage in ```editprofile.dart``` sends a POST request with the updated profile data to this endpoint. Upon successful update, the profile information is saved, and the user is notified.
