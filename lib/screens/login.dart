@@ -1,4 +1,5 @@
 import 'package:balinchill/profile/screens/viewprofile.dart';
+import 'package:balinchill/rating/screens/ratingscreen.dart';
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
@@ -111,7 +112,7 @@ class _LoginPageState extends State<LoginPage> {
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => ProfilePage()), //ganti nanti
+                                builder: (context) => RatingsScreen()), //ganti nanti
                           );
                           ScaffoldMessenger.of(context)
                             ..hideCurrentSnackBar()
