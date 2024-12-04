@@ -15,6 +15,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+  String? _selectedRole;
 
   @override
   Widget build(BuildContext context) {
@@ -108,6 +109,31 @@ class _RegisterPageState extends State<RegisterPage> {
                       return null;
                     },
                   ),
+                  const SizedBox(height: 12.0),
+                  DropdownButtonFormField<String>(
+                    value: _selectedRole,
+                    decoration: const InputDecoration(
+                      labelText: 'Role',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(12.0)),
+                      ),
+                    ),
+                    items: const [
+                      DropdownMenuItem(value: 'guest', child: Text('Guest')),
+                      DropdownMenuItem(value: 'host', child: Text('Host')),
+                    ],
+                    onChanged: (value) {
+                      setState(() {
+                        _selectedRole = value;
+                      });
+                    },
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please select a role';
+                      }
+                      return null;
+                    },
+                  ),
                   const SizedBox(height: 24.0),
                   ElevatedButton(
                     onPressed: () async {
@@ -115,13 +141,25 @@ class _RegisterPageState extends State<RegisterPage> {
                       String password1 = _passwordController.text;
                       String password2 = _confirmPasswordController.text;
 
+                      if (_selectedRole == null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Please select a role'),
+                          ),
+                        );
+                        return;
+                      }
+
                       final response = await request.postJson(
-                          "http://127.0.0.1:8000/auth/register/",
-                          jsonEncode({
-                            "username": username,
-                            "password1": password1,
-                            "password2": password2,
-                          }));
+                        "http://127.0.0.1:8000/auth/register/",
+                        jsonEncode({
+                          "username": username,
+                          "password1": password1,
+                          "password2": password2,
+                          "role": _selectedRole,
+                        }),
+                      );
+
                       if (context.mounted) {
                         if (response['status'] == 'success') {
                           ScaffoldMessenger.of(context).showSnackBar(
