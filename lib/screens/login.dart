@@ -1,31 +1,10 @@
-import 'package:balinchill/profile/screens/viewprofile.dart';
-import 'package:balinchill/rating/screens/ratingscreen.dart';
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:balinchill/screens/register.dart';
+import 'package:balinchill/screens/host.dart';
+import 'package:balinchill/screens/guest.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
-import 'package:balinchill/screens/register.dart';
-
-void main() {
-  runApp(const LoginApp());
-}
-
-class LoginApp extends StatelessWidget {
-  const LoginApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Login',
-      theme: ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSwatch(
-          primarySwatch: Colors.deepPurple,
-        ).copyWith(secondary: Colors.deepPurple[400]),
-      ),
-      home: const LoginPage(),
-    );
-  }
-}
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -99,27 +78,47 @@ class _LoginPageState extends State<LoginPage> {
                       String username = _usernameController.text;
                       String password = _passwordController.text;
 
-                      final response = await request
-                          .login("http://127.0.0.1:8000/auth/login/", {
-                        'username': username,
-                        'password': password,
-                      });
+                      final response = await request.login(
+                        "http://127.0.0.1:8000/auth/login/",
+                        {
+                          'username': username,
+                          'password': password,
+                        },
+                      );
 
                       if (request.loggedIn) {
                         String message = response['message'];
                         String uname = response['username'];
+                        String role = response['role']; // Ensure role is included in the response
+
                         if (context.mounted) {
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => RatingsScreen()), //ganti nanti
-                          );
+                          // Navigate based on the role (host or guest)
+                          if (role == 'host') {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const HostPage(),
+                              ),
+                            );
+                          } else if (role == 'guest') {
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const GuestPage(),
+                              ),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Invalid role assigned!'),
+                              ),
+                            );
+                          }
+
                           ScaffoldMessenger.of(context)
                             ..hideCurrentSnackBar()
                             ..showSnackBar(
-                              SnackBar(
-                                  content:
-                                      Text("$message Welcome, $uname.")),
+                              SnackBar(content: Text("$message Welcome, $uname.")),
                             );
                         }
                       } else {
