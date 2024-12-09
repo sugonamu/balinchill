@@ -71,27 +71,16 @@ class _EditProfilePageState extends State<EditProfilePage> {
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // User information fields
-            TextField(
-              controller: _usernameController,
-              decoration: const InputDecoration(labelText: 'Username'),
-            ),
-            TextField(
-              controller: _emailController,
-              decoration: const InputDecoration(labelText: 'Email'),
-            ),
-            TextField(
-              controller: _firstNameController,
-              decoration: const InputDecoration(labelText: 'First Name'),
-            ),
-            TextField(
-              controller: _lastNameController,
-              decoration: const InputDecoration(labelText: 'Last Name'),
-            ),
+            _buildTextField(_usernameController, 'Username'),
+            _buildTextField(_emailController, 'Email'),
+            _buildTextField(_firstNameController, 'First Name'),
+            _buildTextField(_lastNameController, 'Last Name'),
             const SizedBox(height: 16),
             // Image selection
-            const Text('Select Profile Image:'),
+            const Text('Select Profile Image:', style: TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
             Wrap(
               spacing: 8.0,
@@ -107,14 +96,19 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       border: Border.all(
                         color: _selectedImage == imagePath ? Colors.blue : Colors.grey,
                       ),
+                      borderRadius: BorderRadius.circular(8),
                     ),
-                    child: Image.network(
-                    'http://127.0.0.1:8000/media/$imagePath',
-                      width: 80,
-                      height: 80,
-                      errorBuilder: (context, error, stackTrace) {
-                        return const Icon(Icons.error);
-                      },
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.network(
+                        'http://127.0.0.1:8000/media/$imagePath',
+                        width: 80,
+                        height: 80,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return const Icon(Icons.error);
+                        },
+                      ),
                     ),
                   ),
                 );
@@ -122,18 +116,36 @@ class _EditProfilePageState extends State<EditProfilePage> {
             ),
             const SizedBox(height: 16),
             // Save button
-            ElevatedButton(
-              onPressed: () => _updateProfile(request),
-              style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.white,
-                backgroundColor: const Color(0xFFB89576),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+            Center(
+              child: ElevatedButton(
+                onPressed: () => _updateProfile(request),
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: const Color(0xFFB89576),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
                 ),
+                child: const Text('Save'),
               ),
-              child: const Text('Save'),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextField(TextEditingController controller, String label) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16.0),
+      child: TextField(
+        controller: controller,
+        decoration: InputDecoration(
+          labelText: label,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
         ),
       ),
     );
