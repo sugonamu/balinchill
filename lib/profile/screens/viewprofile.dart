@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:balinchill/profile/screens/editprofile.dart';
 import 'package:balinchill/profile/models/profile.dart';
+import 'package:balinchill/services/api_service.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -12,31 +13,22 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  // Fetch profiles directly from the API
-  Future<List<Profile>> fetchProfiles(CookieRequest request) async {
-    final response = await request.get('http://127.0.0.1:8000/users/profiles/');
-
-    if (response == null) {
-      throw Exception('Failed to load profiles');
-    }
-
-    // Parse response into Profile objects
-    return (response as List).map((data) => Profile.fromJson(data)).toList();
-  }
+  late ApiService apiService;
 
   @override
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
+    apiService = ApiService(baseUrl: 'http://127.0.0.1:8000', request: request);
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('User Profiles'),
-        backgroundColor: const Color(0xFFB89576), // Retained color
-        elevation: 4, // Added elevation for shadow effect
+        backgroundColor: const Color(0xFFB89576),
+        elevation: 4,
       ),
-      body: FutureBuilder(
-        future: fetchProfiles(request),
-        builder: (context, AsyncSnapshot snapshot) {
+      body: FutureBuilder<List<Profile>>(
+        future: apiService.fetchProfiles(),
+        builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
@@ -46,7 +38,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 style: const TextStyle(fontSize: 20),
               ),
             );
-          } else if (!snapshot.hasData || snapshot.data.isEmpty) {
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
             return const Center(
               child: Text(
                 'No profile data available',
@@ -68,35 +60,31 @@ class _ProfilePageState extends State<ProfilePage> {
                       padding: const EdgeInsets.all(16.0),
                       child: Column(
                         children: [
-                          // Profile Picture
                           CircleAvatar(
                             radius: 50,
-                            backgroundImage: NetworkImage(
-                                profile.fields.image), // Image loaded here
-                            onBackgroundImageError: (exception, stackTrace) {
-                              print("Failed to load image: $exception");
-                            },
+                            backgroundImage: NetworkImage(profile.fields.image),
                           ),
                           const SizedBox(height: 16),
-                          // Display the user's information (username, email, first name, last name)
                           Text(
                             'Username: ${profile.fields.user.username}',
                             style: Theme.of(context).textTheme.titleLarge,
                           ),
+                          const SizedBox(height: 8),
                           Text(
-                            'Email: ${profile.fields.user.email.isNotEmpty ? profile.fields.user.email : "N/A"}',
+                            'Email: ${profile.fields.user.email}',
                             style: Theme.of(context).textTheme.bodyLarge,
                           ),
+                          const SizedBox(height: 8),
                           Text(
-                            'First Name: ${profile.fields.user.firstName.isNotEmpty ? profile.fields.user.firstName : "N/A"}',
+                            'First Name: ${profile.fields.user.firstName}',
                             style: Theme.of(context).textTheme.bodyLarge,
                           ),
+                          const SizedBox(height: 8),
                           Text(
-                            'Last Name: ${profile.fields.user.lastName.isNotEmpty ? profile.fields.user.lastName : "N/A"}',
+                            'Last Name: ${profile.fields.user.lastName}',
                             style: Theme.of(context).textTheme.bodyLarge,
                           ),
                           const SizedBox(height: 16),
-                          // Action Button
                           ElevatedButton.icon(
                             onPressed: () async {
                               await Navigator.push(
@@ -105,7 +93,6 @@ class _ProfilePageState extends State<ProfilePage> {
                                   builder: (context) => EditProfilePage(profile: profile),
                                 ),
                               );
-                              // Trigger a rebuild to refresh data
                               setState(() {});
                             },
                             icon: const Icon(Icons.edit),
