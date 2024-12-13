@@ -15,15 +15,15 @@ class ApiService {
   });
 
   // Fetch all profiles from the API
-  Future<List<Profile>> fetchProfiles() async {
-    final response = await request.get('$baseUrl/users/profiles/');
+  Future<Profile> fetchUserProfile() async {
+    final response = await request.get('http://127.0.0.1:8000/users/api');  // Endpoint for the logged-in user profile
 
     if (response == null) {
-      throw Exception('Failed to load profiles');
+      throw Exception('Failed to load user profile');
     }
 
-    // Parse response into Profile objects
-    return (response as List).map((data) => Profile.fromJson(data)).toList();
+    // Parse response into a Profile object
+    return Profile.fromJson(response);
   }
 
   // Update a user's profile

@@ -45,21 +45,28 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit Profile'),
-        backgroundColor: const Color(0xFFB89576),
+        title: const Text('Edit Profile', style: TextStyle(fontWeight: FontWeight.bold)),
+        backgroundColor: const Color(0xFF1877F2), // Facebook blue
+        elevation: 2,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.check),
+            onPressed: () => _updateProfile(),
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildTextField(_usernameController, 'Username'),
-            _buildTextField(_emailController, 'Email'),
-            _buildTextField(_firstNameController, 'First Name'),
-            _buildTextField(_lastNameController, 'Last Name'),
-            const SizedBox(height: 16),
-            const Text('Select Profile Image:', style: TextStyle(fontWeight: FontWeight.bold)),
-            const SizedBox(height: 8),
+            // Profile Image Selector
+            const Text('Profile Image', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 10),
             Wrap(
+              alignment: WrapAlignment.start,
+              spacing: 10,
+              runSpacing: 10,
               children: _availableImages.map((imagePath) {
                 return GestureDetector(
                   onTap: () {
@@ -72,10 +79,10 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       border: Border.all(
                         color: _selectedImage == imagePath ? Colors.blue : Colors.grey,
                       ),
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(15),
                     ),
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(15),
                       child: Image.network(
                         'http://127.0.0.1:8000/media/$imagePath',
                         width: 80,
@@ -87,18 +94,32 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 );
               }).toList(),
             ),
+            const SizedBox(height: 20),
+
+            // Form Fields
+            _buildTextField(_usernameController, 'Username'),
             const SizedBox(height: 16),
+            _buildTextField(_emailController, 'Email'),
+            const SizedBox(height: 16),
+            _buildTextField(_firstNameController, 'First Name'),
+            const SizedBox(height: 16),
+            _buildTextField(_lastNameController, 'Last Name'),
+            const SizedBox(height: 20),
+
+            // Save Button
             Center(
               child: ElevatedButton(
                 onPressed: () => _updateProfile(),
                 style: ElevatedButton.styleFrom(
                   foregroundColor: Colors.white,
-                  backgroundColor: const Color(0xFFB89576),
+                  backgroundColor: const Color(0xFF1877F2),
+                  padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 12),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
+                  elevation: 5,
                 ),
-                child: const Text('Save'),
+                child: const Text('Save Changes', style: TextStyle(fontSize: 16)),
               ),
             ),
           ],
@@ -112,7 +133,14 @@ class _EditProfilePageState extends State<EditProfilePage> {
       controller: controller,
       decoration: InputDecoration(
         labelText: label,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        labelStyle: const TextStyle(color: Colors.black54),
+        filled: true,
+        fillColor: Colors.grey[200],
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide.none,
+        ),
+        contentPadding: const EdgeInsets.symmetric(vertical: 15, horizontal: 12),
       ),
     );
   }
