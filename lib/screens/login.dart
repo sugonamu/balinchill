@@ -5,6 +5,30 @@ import 'package:balinchill/screens/host.dart';
 import 'package:balinchill/screens/guest.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
+import 'package:balinchill/screens/register.dart';
+import 'package:balinchill/booking/screens/homepage.dart';
+
+void main() {
+  runApp(const LoginApp());
+}
+
+class LoginApp extends StatelessWidget {
+  const LoginApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Login',
+      theme: ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSwatch(
+          primarySwatch: Colors.deepPurple,
+        ).copyWith(secondary: Colors.deepPurple[400]),
+      ),
+      home: const LoginPage(),
+    );
+  }
+}
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -92,6 +116,12 @@ class _LoginPageState extends State<LoginPage> {
                         String role = response['role']; // Ensure role is included in the response
 
                         if (context.mounted) {
+
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => HomePage()), //ganti nanti
+                          );
                           // Navigate based on the role (host or guest)
                           if (role == 'host') {
                             Navigator.pushReplacement(
