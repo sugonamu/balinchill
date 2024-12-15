@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:balinchill/profile/screens/editprofile.dart';
 import 'package:balinchill/profile/models/profile.dart';
+import 'package:balinchill/services/api_service.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -12,31 +13,22 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  // Fetch profiles directly from the API
-  Future<List<Profile>> fetchProfiles(CookieRequest request) async {
-    final response = await request.get('http://127.0.0.1:8000/users/profiles/');
-
-    if (response == null) {
-      throw Exception('Failed to load profiles');
-    }
-
-    // Parse response into Profile objects
-    return (response as List).map((data) => Profile.fromJson(data)).toList();
-  }
+  late ApiService apiService;
 
   @override
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
+    apiService = ApiService(baseUrl: 'http://127.0.0.1:8000/', request: request);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('User Profiles'),
-        backgroundColor: const Color(0xFFB89576), // Retained color
-        elevation: 4, // Added elevation for shadow effect
+        title: const Text('User Profile', style: TextStyle(fontWeight: FontWeight.bold)),
+        backgroundColor: const Color(0xFF1877F2), // Facebook-like blue color
+        elevation: 4,
       ),
-      body: FutureBuilder(
-        future: fetchProfiles(request),
-        builder: (context, AsyncSnapshot snapshot) {
+      body: FutureBuilder<Profile>(
+        future: apiService.fetchUserProfile(), // Fetch only the logged-in user's profile
+        builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
@@ -46,7 +38,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 style: const TextStyle(fontSize: 20),
               ),
             );
-          } else if (!snapshot.hasData || snapshot.data.isEmpty) {
+          } else if (!snapshot.hasData) {
             return const Center(
               child: Text(
                 'No profile data available',
@@ -54,75 +46,173 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
             );
           } else {
+            final profile = snapshot.data!;  // Get the profile data
+
             return SingleChildScrollView(
               padding: const EdgeInsets.all(16.0),
               child: Column(
-                children: snapshot.data!.map<Widget>((profile) {
-                  return Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Profile Image Section
+                  Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 10,
+                          spreadRadius: 2,
+                        ),
+                      ],
                     ),
-                    elevation: 5,
-                    margin: const EdgeInsets.symmetric(vertical: 10),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        children: [
-                          // Profile Picture
-                          CircleAvatar(
-                            radius: 50,
-                            backgroundImage: NetworkImage(
-                                profile.fields.image), // Image loaded here
-                            onBackgroundImageError: (exception, stackTrace) {
-                              print("Failed to load image: $exception");
-                            },
-                          ),
-                          const SizedBox(height: 16),
-                          // Display the user's information (username, email, first name, last name)
-                          Text(
+                    child: CircleAvatar(
+                      radius: 55,
+                      backgroundImage: NetworkImage(profile.fields.image),
+                      backgroundColor: Colors.grey[200],
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+
+                  // Username Section
+                  Container(
+                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          blurRadius: 8,
+                          spreadRadius: 2,
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.person, color: Color(0xFF1877F2)),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
                             'Username: ${profile.fields.user.username}',
-                            style: Theme.of(context).textTheme.titleLarge,
+                            style: Theme.of(context).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.w600),
                           ),
-                          Text(
-                            'Email: ${profile.fields.user.email.isNotEmpty ? profile.fields.user.email : "N/A"}',
-                            style: Theme.of(context).textTheme.bodyLarge,
-                          ),
-                          Text(
-                            'First Name: ${profile.fields.user.firstName.isNotEmpty ? profile.fields.user.firstName : "N/A"}',
-                            style: Theme.of(context).textTheme.bodyLarge,
-                          ),
-                          Text(
-                            'Last Name: ${profile.fields.user.lastName.isNotEmpty ? profile.fields.user.lastName : "N/A"}',
-                            style: Theme.of(context).textTheme.bodyLarge,
-                          ),
-                          const SizedBox(height: 16),
-                          // Action Button
-                          ElevatedButton.icon(
-                            onPressed: () async {
-                              await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => EditProfilePage(profile: profile),
-                                ),
-                              );
-                              // Trigger a rebuild to refresh data
-                              setState(() {});
-                            },
-                            icon: const Icon(Icons.edit),
-                            label: const Text('Edit Profile'),
-                            style: ElevatedButton.styleFrom(
-                              foregroundColor: Colors.white,
-                              backgroundColor: const Color(0xFFB89576),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  );
-                }).toList(),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Email Section
+                  Container(
+                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          blurRadius: 8,
+                          spreadRadius: 2,
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.email, color: Color(0xFF1877F2)),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            'Email: ${profile.fields.user.email}',
+                            style: Theme.of(context).textTheme.bodyLarge!.copyWith(color: Colors.grey[700]),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // First Name Section
+                  Container(
+                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          blurRadius: 8,
+                          spreadRadius: 2,
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.account_circle, color: Color(0xFF1877F2)),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            'First Name: ${profile.fields.user.firstName}',
+                            style: Theme.of(context).textTheme.bodyLarge!.copyWith(color: Colors.grey[700]),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Last Name Section
+                  Container(
+                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          blurRadius: 8,
+                          spreadRadius: 2,
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.account_circle, color: Color(0xFF1877F2)),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            'Last Name: ${profile.fields.user.lastName}',
+                            style: Theme.of(context).textTheme.bodyLarge!.copyWith(color: Colors.grey[700]),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 30),
+
+                  // Edit Button
+                  ElevatedButton.icon(
+                    onPressed: () async {
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => EditProfilePage(profile: profile),
+                        ),
+                      );
+                      setState(() {}); // Refresh the profile data after editing
+                    },
+                    icon: const Icon(Icons.edit, color: Colors.white),
+                    label: const Text('Edit Profile'),
+                    style: ElevatedButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      backgroundColor: const Color(0xFF1877F2),
+                      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      elevation: 5,
+                    ),
+                  ),
+                ],
               ),
             );
           }

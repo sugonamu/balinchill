@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:balinchill/profile/models/profile.dart';
+import 'package:balinchill/services/api_service.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
 
 class EditProfilePage extends StatefulWidget {
   final Profile profile;
@@ -25,6 +26,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
     'profile_pics/image3.jpg',
   ];
 
+  late ApiService apiService;
+
   @override
   void initState() {
     super.initState();
@@ -35,66 +38,35 @@ class _EditProfilePageState extends State<EditProfilePage> {
     _selectedImage = widget.profile.fields.image;
   }
 
-  Future<void> _updateProfile(CookieRequest request) async {
-    final response = await request.post(
-      'http://127.0.0.1:8000/users/update_profile_flutter/',
-      {
-        'username': _usernameController.text,
-        'email': _emailController.text,
-        'first_name': _firstNameController.text,
-        'last_name': _lastNameController.text,
-        'image': _selectedImage,
-      },
-    );
-
-    if (response['status'] == 'success') {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Profile updated successfully')),
-      );
-      Navigator.pop(context);
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: ${response['message']}')),
-      );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
+    apiService = ApiService(baseUrl: 'http://127.0.0.1:8000', request: request);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit Profile'),
-        backgroundColor: const Color(0xFFB89576),
+        title: const Text('Edit Profile', style: TextStyle(fontWeight: FontWeight.bold)),
+        backgroundColor: const Color(0xFF1877F2), // Facebook blue
+        elevation: 2,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.check),
+            onPressed: () => _updateProfile(),
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // User information fields
-            TextField(
-              controller: _usernameController,
-              decoration: const InputDecoration(labelText: 'Username'),
-            ),
-            TextField(
-              controller: _emailController,
-              decoration: const InputDecoration(labelText: 'Email'),
-            ),
-            TextField(
-              controller: _firstNameController,
-              decoration: const InputDecoration(labelText: 'First Name'),
-            ),
-            TextField(
-              controller: _lastNameController,
-              decoration: const InputDecoration(labelText: 'Last Name'),
-            ),
-            const SizedBox(height: 16),
-            // Image selection
-            const Text('Select Profile Image:'),
-            const SizedBox(height: 8),
+            // Profile Image Selector
+            const Text('Profile Image', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 10),
             Wrap(
-              spacing: 8.0,
+              alignment: WrapAlignment.start,
+              spacing: 10,
+              runSpacing: 10,
               children: _availableImages.map((imagePath) {
                 return GestureDetector(
                   onTap: () {
@@ -107,35 +79,89 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       border: Border.all(
                         color: _selectedImage == imagePath ? Colors.blue : Colors.grey,
                       ),
+                      borderRadius: BorderRadius.circular(15),
                     ),
-                    child: Image.network(
-                    'http://127.0.0.1:8000/media/$imagePath',
-                      width: 80,
-                      height: 80,
-                      errorBuilder: (context, error, stackTrace) {
-                        return const Icon(Icons.error);
-                      },
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(15),
+                      child: Image.network(
+                        'http://127.0.0.1:8000/media/$imagePath',
+                        width: 80,
+                        height: 80,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
                 );
               }).toList(),
             ),
+            const SizedBox(height: 20),
+
+            // Form Fields
+            _buildTextField(_usernameController, 'Username'),
             const SizedBox(height: 16),
-            // Save button
-            ElevatedButton(
-              onPressed: () => _updateProfile(request),
-              style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.white,
-                backgroundColor: const Color(0xFFB89576),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+            _buildTextField(_emailController, 'Email'),
+            const SizedBox(height: 16),
+            _buildTextField(_firstNameController, 'First Name'),
+            const SizedBox(height: 16),
+            _buildTextField(_lastNameController, 'Last Name'),
+            const SizedBox(height: 20),
+
+            // Save Button
+            Center(
+              child: ElevatedButton(
+                onPressed: () => _updateProfile(),
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: const Color(0xFF1877F2),
+                  padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  elevation: 5,
                 ),
+                child: const Text('Save Changes', style: TextStyle(fontSize: 16)),
               ),
-              child: const Text('Save'),
             ),
           ],
         ),
       ),
     );
+  }
+
+  TextField _buildTextField(TextEditingController controller, String label) {
+    return TextField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: const TextStyle(color: Colors.black54),
+        filled: true,
+        fillColor: Colors.grey[200],
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide.none,
+        ),
+        contentPadding: const EdgeInsets.symmetric(vertical: 15, horizontal: 12),
+      ),
+    );
+  }
+
+  void _updateProfile() async {
+    try {
+      final response = await apiService.updateProfile(
+        username: _usernameController.text,
+        email: _emailController.text,
+        firstName: _firstNameController.text,
+        lastName: _lastNameController.text,
+        image: _selectedImage,
+      );
+      if (response.containsKey('message') && response['message'] == 'Profile updated successfully') {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Profile updated')));
+        Navigator.pop(context);
+      } else {
+        throw Exception('Failed to update profile');
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
+    }
   }
 }
