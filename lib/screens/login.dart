@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:balinchill/screens/register.dart';
+import 'package:balinchill/booking/screens/homepage.dart';
 
 void main() {
   runApp(const LoginApp());
@@ -112,7 +113,7 @@ class _LoginPageState extends State<LoginPage> {
                           Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => RatingsScreen()), //ganti nanti
+                                builder: (context) => HomePage()), //ganti nanti
                           );
                           ScaffoldMessenger.of(context)
                             ..hideCurrentSnackBar()
