@@ -1,63 +1,39 @@
-import 'dart:convert';
+// hotel.dart
+class Hotel {
+  final int id;
+  final String hotelName;
+  final String price;
+  final double avgRating;
+  final int reviewCount;
 
-List<Rating> ratingFromJson(String str) =>
-    List<Rating>.from(json.decode(str).map((x) => Rating.fromJson(x)));
+  Hotel({required this.id, required this.hotelName, required this.price, required this.avgRating, required this.reviewCount});
 
-String ratingToJson(List<Rating> data) =>
-    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
-
-class Rating {
-  final String model;
-  final int pk;
-  final Fields fields;
-
-  Rating({
-    required this.model,
-    required this.pk,
-    required this.fields,
-  });
-
-  factory Rating.fromJson(Map<String, dynamic> json) => Rating(
-        model: json["model"],
-        pk: json["pk"],
-        fields: Fields.fromJson(json["fields"]),
-      );
-
-  Map<String, dynamic> toJson() => {
-        "model": model,
-        "pk": pk,
-        "fields": fields.toJson(),
-      };
+  factory Hotel.fromJson(Map<String, dynamic> json) {
+    return Hotel(
+      id: json['id'],
+      hotelName: json['Hotel'],
+      price: json['Price'],
+      avgRating: json['avg_rating'] ?? 0.0,
+      reviewCount: json['review_count'],
+    );
+  }
 }
 
-class Fields {
-  final int hotel;
-  final int user;
+// rating.dart
+class Rating {
+  final int id;
+  final String user;
   final int rating;
-  final String? review; // Nullable to match your model
-  final DateTime createdAt;
+  final String review;
 
-  Fields({
-    required this.hotel,
-    required this.user,
-    required this.rating,
-    this.review,
-    required this.createdAt,
-  });
+  Rating({required this.id, required this.user, required this.rating, required this.review});
 
-  factory Fields.fromJson(Map<String, dynamic> json) => Fields(
-        hotel: json["hotel"],
-        user: json["user"],
-        rating: json["rating"],
-        review: json["review"], // Nullable field
-        createdAt: DateTime.parse(json["created_at"]),
-      );
-
-  Map<String, dynamic> toJson() => {
-        "hotel": hotel,
-        "user": user,
-        "rating": rating,
-        "review": review,
-        "created_at": createdAt.toIso8601String(),
-      };
+  factory Rating.fromJson(Map<String, dynamic> json) {
+    return Rating(
+      id: json['id'],
+      user: json['user'],
+      rating: json['rating'],
+      review: json['review'] ?? '',
+    );
+  }
 }
