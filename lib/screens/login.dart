@@ -5,7 +5,6 @@ import 'package:balinchill/screens/host.dart';
 import 'package:balinchill/screens/guest.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
-import 'package:balinchill/screens/register.dart';
 import 'package:balinchill/booking/screens/homepage.dart';
 
 void main() {
@@ -31,7 +30,9 @@ class LoginApp extends StatelessWidget {
 }
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+  final String? selectedRole;  // Add this field to store the passed role
+
+  const LoginPage({super.key, this.selectedRole});  // Constructor to receive the role
 
   @override
   State<LoginPage> createState() => _LoginPageState();
@@ -111,44 +112,43 @@ class _LoginPageState extends State<LoginPage> {
                       );
 
                       if (request.loggedIn) {
-                        String message = response['message'];
-                        String uname = response['username'];
-                        String role = response['role']; // Ensure role is included in the response
+                        // Safe access to response fields with fallback to empty strings if they are null
+                        String message = response['message'] ?? 'No message provided';
+                        String uname = response['username'] ?? 'Unknown user';
+                        String role = widget.selectedRole ?? '';
 
                         if (context.mounted) {
+                          // Log the response to check what's being returned
+                          print("Response: $response");
 
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => HomePage()), //ganti nanti
-                          );
                           // Navigate based on the role (host or guest)
-                          if (role == 'host') {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const HostPage(),
-                              ),
-                            );
-                          } else if (role == 'guest') {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const GuestPage(),
-                              ),
-                            );
+                          if (role.isNotEmpty) {
+                            if (role == 'host') {
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(builder: (context) => const HostPage()),
+                              );
+                            } else if (role == 'guest') { 
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(builder: (context) => const GuestPage()),
+                              );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('Invalid role assigned!')),
+                              );
+                            }
                           } else {
+                            // Handle missing role scenario
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Invalid role assigned!'),
-                              ),
+                              const SnackBar(content: Text('Role is missing from the response!')),
                             );
                           }
 
                           ScaffoldMessenger.of(context)
                             ..hideCurrentSnackBar()
                             ..showSnackBar(
-                              SnackBar(content: Text("$message Welcome, $uname.")),
+                              SnackBar(content: Text("$message Welcome, $uname. Your role: $role")),
                             );
                         }
                       } else {
@@ -157,7 +157,7 @@ class _LoginPageState extends State<LoginPage> {
                             context: context,
                             builder: (context) => AlertDialog(
                               title: const Text('Login Failed'),
-                              content: Text(response['message']),
+                              content: Text(response['message'] ?? 'Login failed without message'),
                               actions: [
                                 TextButton(
                                   child: const Text('OK'),

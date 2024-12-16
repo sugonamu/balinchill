@@ -163,14 +163,17 @@ class _RegisterPageState extends State<RegisterPage> {
                       if (context.mounted) {
                         if (response['status'] == 'success') {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Successfully registered!'),
+                            SnackBar(
+                              content: Text(
+                                'Successfully registered! Username: $username, Role: $_selectedRole',
+                              ),
                             ),
                           );
                           Navigator.pushReplacement(
                             context,
-                            MaterialPageRoute(builder: (context) => const LoginPage()),
-                          );
+                            MaterialPageRoute(builder: (context) => LoginPage(selectedRole: _selectedRole),
+                          ),
+                        );
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
