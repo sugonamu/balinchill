@@ -1,37 +1,36 @@
-import 'dart:convert';
-import 'package:uuid/uuid.dart'; // Import UUID package
-
-// Define the Property model that includes Hotel and Bookings
 class Property {
-  final String id;  // Use String for the UUID id
-  final String name;
-  final String? category;
-  final String? address;
-  final String? contact;
+  final String id;
+  final String host;
+  final String hotelName;  
+  final String category;
+  final String address;
+  final String contact;
   final String price;
-  final String? amenities;
-  final String? imageUrl;
-  final String? location;
-  final String? pageUrl;
+  final String amenities;
+  final String imageUrl;
+  final String location;
+  final String pageUrl;
 
   Property({
     required this.id,
-    required this.name,
-    this.category,
-    this.address,
-    this.contact,
+    required this.host,
+    required this.hotelName,
+    required this.category,
+    required this.address,
+    required this.contact,
     required this.price,
-    this.amenities,
-    this.imageUrl,
-    this.location,
-    this.pageUrl,
+    required this.amenities,
+    required this.imageUrl,
+    required this.location,
+    required this.pageUrl,
   });
 
-  // Factory constructor to create a Property object from JSON
+  // Factory constructor to create a Property instance from a JSON object
   factory Property.fromJson(Map<String, dynamic> json) {
     return Property(
-      id: json['id'] ?? Uuid().v4(),  // Generate UUID if the id is missing in the JSON
-      name: json['Hotel'] ?? 'Unknown Hotel',
+      id: json['id'],
+      host: json['host'],  // Assuming the host is passed from the backend
+      hotelName: json['Hotel'],
       category: json['Category'],
       address: json['Address'],
       contact: json['Contact'],
@@ -43,11 +42,12 @@ class Property {
     );
   }
 
-  // Method to convert a Property object to JSON
+  // Method to convert the Property instance to a JSON object
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'Hotel': name,
+      'host': host,
+      'Hotel': hotelName,
       'Category': category,
       'Address': address,
       'Contact': contact,

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:balinchill/host/models/property.dart';
-import 'package:uuid/uuid.dart'; // Import UUID package
+import 'package:uuid/uuid.dart';
 
 class AddPropertyPage extends StatefulWidget {
   final Function(Property) onAddProperty;
@@ -13,28 +13,31 @@ class AddPropertyPage extends StatefulWidget {
 
 class _AddPropertyPageState extends State<AddPropertyPage> {
   final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
+  final _hotelNameController = TextEditingController();
   final _categoryController = TextEditingController();
   final _addressController = TextEditingController();
   final _contactController = TextEditingController();
   final _priceController = TextEditingController();
   final _amenitiesController = TextEditingController();
   final _locationController = TextEditingController();
+  final _imageUrlController = TextEditingController();  // New field for image URL
+  final _pageUrlController = TextEditingController();  // New field for page URL
 
   // Handle form submission
   void _submitForm() {
     if (_formKey.currentState?.validate() ?? false) {
       final newProperty = Property(
         id: Uuid().v4(), // Generate a unique UUID for the property
-        name: _nameController.text,
+        host: 'currentUser',  // Example, update this to the actual logged-in user
+        hotelName: _hotelNameController.text,
         category: _categoryController.text,
         address: _addressController.text,
         contact: _contactController.text,
         price: _priceController.text,
         amenities: _amenitiesController.text,
-        imageUrl: '', // Handle image upload if needed
+        imageUrl: _imageUrlController.text,  // Handle image URL input
         location: _locationController.text,
-        pageUrl: '', // Handle page URL if needed
+        pageUrl: _pageUrlController.text,  // Handle page URL input
       );
 
       widget.onAddProperty(newProperty); // Add the new property to the list
@@ -57,11 +60,11 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               TextFormField(
-                controller: _nameController,
-                decoration: InputDecoration(labelText: 'Property Name'),
+                controller: _hotelNameController,
+                decoration: InputDecoration(labelText: 'Hotel Name'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter a property name';
+                    return 'Please enter a hotel name';
                   }
                   return null;
                 },
@@ -119,6 +122,26 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter a location';
+                  }
+                  return null;
+                },
+              ),
+              TextFormField(
+                controller: _imageUrlController,
+                decoration: InputDecoration(labelText: 'Image URL'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter an image URL';
+                  }
+                  return null;
+                },
+              ),
+              TextFormField(
+                controller: _pageUrlController,
+                decoration: InputDecoration(labelText: 'Page URL'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a page URL';
                   }
                   return null;
                 },
