@@ -1,3 +1,4 @@
+import 'package:balinchill/env.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:balinchill/profile/models/profile.dart';
@@ -46,7 +47,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Edit Profile', style: TextStyle(fontWeight: FontWeight.bold)),
-        backgroundColor: const Color(0xFF1877F2), // Facebook blue
+        backgroundColor: const Color(0xFFB89576), // Facebook blue
         elevation: 2,
         actions: [
           IconButton(
@@ -84,7 +85,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(15),
                       child: Image.network(
-                        'http://127.0.0.1:8000/media/$imagePath',
+                        '${Env.backendUrl}/media/$imagePath',
                         width: 80,
                         height: 80,
                         fit: BoxFit.cover,

@@ -3,7 +3,7 @@ import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:balinchill/profile/models/profile.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
-import 'package:balinchill/config/env.dart';  // Import the Env class
+import 'package:balinchill/env.dart';  // Import the Env class
 
 class ApiService {
   final String baseUrl;
@@ -16,7 +16,7 @@ class ApiService {
 
   // Fetch all profiles from the API
   Future<Profile> fetchUserProfile() async {
-    final response = await request.get('http://127.0.0.1:8000/users/api');  // Endpoint for the logged-in user profile
+    final response = await request.get('${Env.backendUrl}/users/api');  // Endpoint for the logged-in user profile
 
     if (response == null) {
       throw Exception('Failed to load user profile');
@@ -35,7 +35,7 @@ class ApiService {
     required String? image,
   }) async {
     final response = await request.post(
-      '$baseUrl/users/update_profile_flutter/',
+      '${Env.backendUrl}/users/update_profile_flutter/',
       {
         'username': username,
         'email': email,

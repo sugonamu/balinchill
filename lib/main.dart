@@ -23,8 +23,8 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           useMaterial3: true,
           colorScheme: ColorScheme.fromSwatch(
-            primarySwatch: Colors.deepPurple,
-          ).copyWith(secondary: Colors.deepPurple[400]),
+            primarySwatch: Colors.brown,
+          ).copyWith(secondary: const Color(0xFFB89576)),
         ),
         home: LoginPage(),
       ),

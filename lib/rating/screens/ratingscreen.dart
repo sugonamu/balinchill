@@ -50,7 +50,7 @@ class _RatingsScreenState extends State<RatingsScreen> {
 
   // Fetch data from Django API
   Future<List<Rating>> fetchRatings() async {
-    final response = await http.get(Uri.parse('http://127.0.0.1:8000/ratings/json/')); // Replace with your actual endpoint
+    final response = await http.get(Uri.parse('http://127.0.0.1:8000/ratings/json/')); 
 
     if (response.statusCode == 200) {
       List<dynamic> data = json.decode(response.body);
