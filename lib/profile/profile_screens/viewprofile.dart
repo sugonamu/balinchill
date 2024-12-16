@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
-import 'package:balinchill/profile/screens/editprofile.dart';
+import 'package:balinchill/profile/profile_screens/editprofile.dart';
 import 'package:balinchill/profile/models/profile.dart';
 
 class ProfilePage extends StatefulWidget {
