@@ -151,7 +151,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       }
 
                       final response = await request.postJson(
-                        "http://localhost:8000/register/",
+                        "http://localhost:8000/auth/register/",
                         jsonEncode({
                           "username": username,
                           "password1": password1,
@@ -169,13 +169,12 @@ class _RegisterPageState extends State<RegisterPage> {
                           );
                           Navigator.pushReplacement(
                             context,
-                            MaterialPageRoute(
-                                builder: (context) => const LoginPage()),
+                            MaterialPageRoute(builder: (context) => const LoginPage()),
                           );
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Failed to register!'),
+                            SnackBar(
+                              content: Text(response['message'] ?? 'Failed to register!'),
                             ),
                           );
                         }
@@ -189,6 +188,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                     child: const Text('Register'),
                   ),
+
                 ],
               ),
             ),
