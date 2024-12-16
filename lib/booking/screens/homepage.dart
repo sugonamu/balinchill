@@ -1,6 +1,11 @@
+import 'package:balinchill/env.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:balinchill/widgets/left_drawer.dart';
+import 'package:balinchill/services/api_service.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -9,6 +14,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   late Future<List<Hotel>> _hotelsFuture;
   String _selectedSortOption = 'Low to High';
   String _searchQuery = '';
@@ -52,10 +58,22 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final request = context.watch<CookieRequest>();
     final backgroundColor = const Color(0xFFF5F0E1);
 
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: backgroundColor,
+      appBar: AppBar(
+        title: const Text('Home Page'),
+        leading: IconButton(
+          icon: const Icon(Icons.menu),
+          onPressed: () {
+            _scaffoldKey.currentState?.openDrawer();
+          },
+        ),
+      ),
+      drawer: LeftDrawer(apiService: ApiService(baseUrl: '${Env.backendUrl}', request: request)), // Add the LeftDrawer here
       body: SafeArea(
         child: Column(
           children: [

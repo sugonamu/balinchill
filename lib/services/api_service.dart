@@ -81,7 +81,32 @@ class ApiService {
 
     // Optionally, handle the response data or success
   }
+    Future<void> logout() async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/authentication/logout/'),
+      headers: {
+        'Content-Type': 'application/json',
+        // Include any necessary authentication headers here
+      },
+    );
+    if (response.statusCode == 200) {
+      // Logout successful
+    } else {
+      throw Exception('Failed to logout');
+    }
+  }
+    Future<List<Hotel>> fetchHotels() async {
+    final response = await request.get('${Env.backendUrl}/api/hotels/');
+
+    if (response == null) {
+      throw Exception('Failed to load hotels');
+    }
+
+    final List<dynamic> hotelsJson = response;
+    return hotelsJson.map((json) => Hotel.fromJson(json)).toList();
+  }
 }
+
 
 
 

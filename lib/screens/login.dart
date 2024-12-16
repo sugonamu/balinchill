@@ -116,7 +116,7 @@ class _LoginPageState extends State<LoginPage> {
                         // Safe access to response fields with fallback to empty strings if they are null
                         String message = response['message'] ?? 'No message provided';
                         String uname = response['username'] ?? 'Unknown user';
-                        String role = widget.selectedRole ?? '';
+                        String role = response['role'] ?? '';
 
                         if (context.mounted) {
                           // Log the response to check what's being returned
