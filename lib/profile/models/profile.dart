@@ -1,4 +1,6 @@
-import 'dart:convert';  // Import the `dart:convert` package for decoding.
+import 'dart:convert';
+
+import 'package:balinchill/env.dart';  // Import the `dart:convert` package for decoding.
 
 class Profile {
   final int id;
@@ -21,7 +23,7 @@ class Fields {
   Fields({required this.user, required this.image});
 
   factory Fields.fromJson(Map<String, dynamic> json) {
-    String baseUrl = "http://127.0.0.1:8000";
+    String baseUrl = "${Env.backendUrl}";
     String imagePath = json['image'];
     print("Image Path: $imagePath");
     // Decode the URL-encoded part

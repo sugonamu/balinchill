@@ -22,9 +22,21 @@ class _EditProfilePageState extends State<EditProfilePage> {
   String? _selectedImage;
 
   final List<String> _availableImages = [
-    'profile_pics/image1.jpg',
-    'profile_pics/image2.jpg',
-    'profile_pics/image3.jpg',
+    'profile_pics/image 1.jpg',
+    'profile_pics/image 2.jpg',
+    'profile_pics/image 3.jpg',
+    'profile_pics/image 4.jpg',
+    'profile_pics/image 5.jpg',
+    'profile_pics/image 6.jpg',
+    'profile_pics/image 7.jpg',
+    'profile_pics/image 8.jpg',
+    'profile_pics/image 9.jpg',
+    'profile_pics/image 10.jpg',
+    'profile_pics/image 11.jpg',
+    'profile_pics/image 12.jpg',
+    'profile_pics/image 13.jpg',
+    'profile_pics/image 14.jpg',
+    'profile_pics/image 15.jpg',
   ];
 
   late ApiService apiService;
@@ -42,7 +54,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   @override
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
-    apiService = ApiService(baseUrl: 'http://127.0.0.1:8000', request: request);
+    apiService = ApiService(baseUrl: '${Env.backendUrl}', request: request);
 
     return Scaffold(
       appBar: AppBar(
@@ -61,42 +73,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Profile Image Selector
-            const Text('Profile Image', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 10),
-            Wrap(
-              alignment: WrapAlignment.start,
-              spacing: 10,
-              runSpacing: 10,
-              children: _availableImages.map((imagePath) {
-                return GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _selectedImage = imagePath;
-                    });
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: _selectedImage == imagePath ? Colors.blue : Colors.grey,
-                      ),
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(15),
-                      child: Image.network(
-                        '${Env.backendUrl}/media/$imagePath',
-                        width: 80,
-                        height: 80,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                );
-              }).toList(),
-            ),
-            const SizedBox(height: 20),
-
             // Form Fields
             _buildTextField(_usernameController, 'Username'),
             const SizedBox(height: 16),
@@ -105,6 +81,45 @@ class _EditProfilePageState extends State<EditProfilePage> {
             _buildTextField(_firstNameController, 'First Name'),
             const SizedBox(height: 16),
             _buildTextField(_lastNameController, 'Last Name'),
+            const SizedBox(height: 20),
+
+            // Profile Image Selector
+            const Center(
+              child: Text('Profile Image', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            ),
+            const SizedBox(height: 10),
+            Center(
+              child: Wrap(
+                alignment: WrapAlignment.center,
+                spacing: 10,
+                runSpacing: 10,
+                children: _availableImages.map((imagePath) {
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        _selectedImage = imagePath;
+                      });
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: _selectedImage == imagePath ? Colors.blue : Colors.grey,
+                        ),
+                      ),
+                      child: ClipOval(
+                        child: Image.network(
+                          '${Env.backendUrl}/media/$imagePath',
+                          width: 80,
+                          height: 80,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
             const SizedBox(height: 20),
 
             // Save Button
