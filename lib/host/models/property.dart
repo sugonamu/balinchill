@@ -1,9 +1,9 @@
 import 'dart:convert';
-import 'package:balinchill/booking/models/booking.dart'; 
+import 'package:uuid/uuid.dart'; // Import UUID package
 
 // Define the Property model that includes Hotel and Bookings
 class Property {
-  final int id;
+  final String id;  // Use String for the UUID id
   final String name;
   final String? category;
   final String? address;
@@ -30,7 +30,7 @@ class Property {
   // Factory constructor to create a Property object from JSON
   factory Property.fromJson(Map<String, dynamic> json) {
     return Property(
-      id: json['id'],
+      id: json['id'] ?? Uuid().v4(),  // Generate UUID if the id is missing in the JSON
       name: json['Hotel'] ?? 'Unknown Hotel',
       category: json['Category'],
       address: json['Address'],
