@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:balinchill/screens/register.dart';
-import 'package:balinchill/screens/host.dart';
+import 'package:balinchill/host/screens/host.dart';
 import 'package:balinchill/screens/guest.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
@@ -127,7 +127,7 @@ class _LoginPageState extends State<LoginPage> {
                             if (role == 'host') {
                               Navigator.pushReplacement(
                                 context,
-                                MaterialPageRoute(builder: (context) => const HostPage()),
+                                MaterialPageRoute(builder: (context) => HostDashboardPage()),
                               );
                             } else if (role == 'guest') { 
                               Navigator.pushReplacement(
