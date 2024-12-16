@@ -1,3 +1,7 @@
+import 'dart:convert';
+
+import 'package:balinchill/env.dart';  // Import the `dart:convert` package for decoding.
+
 class Profile {
   final int id;
   final Fields fields;
@@ -19,10 +23,18 @@ class Fields {
   Fields({required this.user, required this.image});
 
   factory Fields.fromJson(Map<String, dynamic> json) {
-    String baseUrl = "http://127.0.0.1:8000"; 
-    String fullImageUrl = json['image'].startsWith('/')
-        ? baseUrl + json['image']
-        : json['image'];
+    String baseUrl = "${Env.backendUrl}";
+    String imagePath = json['image'];
+    print("Image Path: $imagePath");
+    // Decode the URL-encoded part
+    String decodedImagePath = Uri.decodeFull(imagePath);
+
+    // Check if the decoded image path starts with 'http' or 'https'
+    String fullImageUrl = decodedImagePath.startsWith('http') || decodedImagePath.startsWith('https')
+        ? decodedImagePath
+        : baseUrl + decodedImagePath;
+
+    print("Decoded Image URL: $fullImageUrl");
 
     return Fields(
       user: User.fromJson(json['user']),

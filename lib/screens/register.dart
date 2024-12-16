@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:balinchill/screens/login.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
+import 'package:balinchill/env.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -151,7 +152,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       }
 
                       final response = await request.postJson(
-                        "http://localhost:8000/register/",
+                        "${Env.backendUrl}/auth/register/",
                         jsonEncode({
                           "username": username,
                           "password1": password1,
@@ -163,19 +164,21 @@ class _RegisterPageState extends State<RegisterPage> {
                       if (context.mounted) {
                         if (response['status'] == 'success') {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Successfully registered!'),
+                            SnackBar(
+                              content: Text(
+                                'Successfully registered! Username: $username, Role: $_selectedRole',
+                              ),
                             ),
                           );
                           Navigator.pushReplacement(
                             context,
-                            MaterialPageRoute(
-                                builder: (context) => const LoginPage()),
-                          );
+                            MaterialPageRoute(builder: (context) => LoginPage(selectedRole: _selectedRole),
+                          ),
+                        );
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Failed to register!'),
+                            SnackBar(
+                              content: Text(response['message'] ?? 'Failed to register!'),
                             ),
                           );
                         }
@@ -189,6 +192,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                     child: const Text('Register'),
                   ),
+
                 ],
               ),
             ),
