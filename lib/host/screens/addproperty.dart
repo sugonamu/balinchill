@@ -3,9 +3,13 @@ import 'package:balinchill/host/models/property.dart';
 import 'package:uuid/uuid.dart';
 
 class AddPropertyPage extends StatefulWidget {
+  final String username; // Logged-in user's username
   final Function(Property) onAddProperty;
 
-  AddPropertyPage({required this.onAddProperty});
+  AddPropertyPage({
+    required this.username,
+    required this.onAddProperty,
+  });
 
   @override
   _AddPropertyPageState createState() => _AddPropertyPageState();
@@ -20,24 +24,23 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
   final _priceController = TextEditingController();
   final _amenitiesController = TextEditingController();
   final _locationController = TextEditingController();
-  final _imageUrlController = TextEditingController();  // New field for image URL
+  final _imageUrlController = TextEditingController(); // New field for image URL
   final _pageUrlController = TextEditingController();  // New field for page URL
 
-  // Handle form submission
   void _submitForm() {
     if (_formKey.currentState?.validate() ?? false) {
       final newProperty = Property(
         id: Uuid().v4(), // Generate a unique UUID for the property
-        host: 'currentUser',  // Example, update this to the actual logged-in user
+        host: widget.username, // Use the logged-in user's username
         hotelName: _hotelNameController.text,
         category: _categoryController.text,
         address: _addressController.text,
         contact: _contactController.text,
         price: _priceController.text,
         amenities: _amenitiesController.text,
-        imageUrl: _imageUrlController.text,  // Handle image URL input
+        imageUrl: _imageUrlController.text,
         location: _locationController.text,
-        pageUrl: _pageUrlController.text,  // Handle page URL input
+        pageUrl: _pageUrlController.text,
       );
 
       widget.onAddProperty(newProperty); // Add the new property to the list
@@ -50,18 +53,17 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Add Property"),
+        title: const Text("Add Property"),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: ListView(
             children: [
               TextFormField(
                 controller: _hotelNameController,
-                decoration: InputDecoration(labelText: 'Hotel Name'),
+                decoration: const InputDecoration(labelText: 'Hotel Name'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter a hotel name';
@@ -71,7 +73,7 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
               ),
               TextFormField(
                 controller: _categoryController,
-                decoration: InputDecoration(labelText: 'Category'),
+                decoration: const InputDecoration(labelText: 'Category'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter a category';
@@ -81,7 +83,7 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
               ),
               TextFormField(
                 controller: _addressController,
-                decoration: InputDecoration(labelText: 'Address'),
+                decoration: const InputDecoration(labelText: 'Address'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter an address';
@@ -91,7 +93,7 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
               ),
               TextFormField(
                 controller: _contactController,
-                decoration: InputDecoration(labelText: 'Contact'),
+                decoration: const InputDecoration(labelText: 'Contact'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter a contact number';
@@ -101,7 +103,7 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
               ),
               TextFormField(
                 controller: _priceController,
-                decoration: InputDecoration(labelText: 'Price'),
+                decoration: const InputDecoration(labelText: 'Price'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter a price';
@@ -114,11 +116,11 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
               ),
               TextFormField(
                 controller: _amenitiesController,
-                decoration: InputDecoration(labelText: 'Amenities'),
+                decoration: const InputDecoration(labelText: 'Amenities'),
               ),
               TextFormField(
                 controller: _locationController,
-                decoration: InputDecoration(labelText: 'Location'),
+                decoration: const InputDecoration(labelText: 'Location'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter a location';
@@ -128,7 +130,7 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
               ),
               TextFormField(
                 controller: _imageUrlController,
-                decoration: InputDecoration(labelText: 'Image URL'),
+                decoration: const InputDecoration(labelText: 'Image URL'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter an image URL';
@@ -138,7 +140,7 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
               ),
               TextFormField(
                 controller: _pageUrlController,
-                decoration: InputDecoration(labelText: 'Page URL'),
+                decoration: const InputDecoration(labelText: 'Page URL'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter a page URL';
@@ -146,10 +148,10 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
                   return null;
                 },
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _submitForm,
-                child: Text("Add Property"),
+                child: const Text("Add Property"),
               ),
             ],
           ),

@@ -4,9 +4,20 @@ import 'dart:convert';
 import 'package:balinchill/env.dart';
 import 'package:uuid/uuid.dart';
 
-class HostDashboardPage extends StatefulWidget {
+class HostDashboardPage extends StatelessWidget {
+  final String username;
+
+  const HostDashboardPage({Key? key, required this.username}) : super(key: key);
+
   @override
-  _HostDashboardPageState createState() => _HostDashboardPageState();
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Welcome, $username"),
+      ),
+      body: Center(child: Text("Host Dashboard for $username")),
+    );
+  }
 }
 
 class _HostDashboardPageState extends State<HostDashboardPage> {
