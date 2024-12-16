@@ -127,7 +127,7 @@ class _LoginPageState extends State<LoginPage> {
                             if (role == 'host') {
                               Navigator.pushReplacement(
                                 context,
-                                MaterialPageRoute(builder: (context) => HostDashboardPage()),
+                                MaterialPageRoute(builder: (context) => HostDashboardPage(username: username,)),
                               );
                             } else if (role == 'guest') { 
                               Navigator.pushReplacement(
