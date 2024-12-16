@@ -4,20 +4,9 @@ import 'dart:convert';
 import 'package:balinchill/env.dart';
 import 'package:uuid/uuid.dart';
 
-class HostDashboardPage extends StatelessWidget {
-  final String username;
-
-  const HostDashboardPage({Key? key, required this.username}) : super(key: key);
-
+class HostDashboardPage extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("Welcome, $username"),
-      ),
-      body: Center(child: Text("Host Dashboard for $username")),
-    );
-  }
+  _HostDashboardPageState createState() => _HostDashboardPageState();
 }
 
 class _HostDashboardPageState extends State<HostDashboardPage> {
@@ -107,7 +96,7 @@ class _HostDashboardPageState extends State<HostDashboardPage> {
       isLoading = true;
     });
 
-    final url = Uri.parse('${Env.backendUrl}/delete/$propertyId/');
+    final url = Uri.parse('${Env.backendUrl}/auth/property/delete/$propertyId/');
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
