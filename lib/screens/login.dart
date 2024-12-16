@@ -6,6 +6,7 @@ import 'package:balinchill/screens/guest.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:balinchill/booking/screens/homepage.dart';
+import 'package:balinchill/env.dart';
 
 void main() {
   runApp(const LoginApp());
@@ -104,7 +105,7 @@ class _LoginPageState extends State<LoginPage> {
                       String password = _passwordController.text;
 
                       final response = await request.login(
-                        "http://127.0.0.1:8000/auth/login/",
+                        "${Env.backendUrl}/auth/login/",
                         {
                           'username': username,
                           'password': password,
@@ -131,7 +132,7 @@ class _LoginPageState extends State<LoginPage> {
                             } else if (role == 'guest') { 
                               Navigator.pushReplacement(
                                 context,
-                                MaterialPageRoute(builder: (context) => const GuestPage()),
+                                MaterialPageRoute(builder: (context) => const HomePage()),
                               );
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:balinchill/screens/login.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
+import 'package:balinchill/env.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -151,7 +152,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       }
 
                       final response = await request.postJson(
-                        "http://localhost:8000/auth/register/",
+                        "${Env.backendUrl}/auth/register/",
                         jsonEncode({
                           "username": username,
                           "password1": password1,
