@@ -49,6 +49,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     style: TextStyle(
                       fontSize: 24.0,
                       fontWeight: FontWeight.bold,
+                      color: Color(0xFFB89576), // Update title color
                     ),
                   ),
                   const SizedBox(height: 30.0),
@@ -172,9 +173,10 @@ class _RegisterPageState extends State<RegisterPage> {
                           );
                           Navigator.pushReplacement(
                             context,
-                            MaterialPageRoute(builder: (context) => LoginPage(selectedRole: _selectedRole),
-                          ),
-                        );
+                            MaterialPageRoute(
+                              builder: (context) => LoginPage(selectedRole: _selectedRole),
+                            ),
+                          );
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
@@ -186,13 +188,12 @@ class _RegisterPageState extends State<RegisterPage> {
                     },
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.white,
-                      minimumSize: Size(double.infinity, 50),
-                      backgroundColor: Theme.of(context).colorScheme.primary,
+                      minimumSize: const Size(double.infinity, 50),
+                      backgroundColor: const Color(0xFFB89576), // Update button color
                       padding: const EdgeInsets.symmetric(vertical: 16.0),
                     ),
                     child: const Text('Register'),
                   ),
-
                 ],
               ),
             ),
