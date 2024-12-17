@@ -5,6 +5,7 @@ import 'package:balinchill/profile/models/profile.dart';
 import 'package:balinchill/services/api_service.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:balinchill/env.dart';
+import 'package:balinchill/widgets/guest_left_drawer.dart'; // Import the LeftDrawer
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -24,9 +25,10 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('User Profile', style: TextStyle(fontWeight: FontWeight.bold)),
-        backgroundColor: const Color(0xFFB89576), // Facebook-like blue color
+        backgroundColor: const Color(0xFFB89576), 
         elevation: 4,
       ),
+      drawer: LeftDrawer(apiService: apiService), 
       body: FutureBuilder<Profile>(
         future: apiService.fetchUserProfile(), // Fetch only the logged-in user's profile
         builder: (context, snapshot) {

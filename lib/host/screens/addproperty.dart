@@ -55,7 +55,7 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
 
       try {
         await apiService.addProperty(property);
-        Navigator.pop(context);
+        Navigator.pop(context,true);
       } catch (e) {
         // Handle errors
         ScaffoldMessenger.of(context).showSnackBar(

@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:balinchill/services/api_service.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:balinchill/env.dart';
+import 'package:balinchill/widgets/host_left_drawer.dart'; // Import the LeftDrawer
 
 class HostDashboardPage extends StatefulWidget {
   @override
@@ -24,6 +25,7 @@ class _HostDashboardPageState extends State<HostDashboardPage> {
         title: Text('My Properties'),
         backgroundColor: Color(0xFFB89576),
       ),
+      drawer: LeftDrawer(apiService: apiService), // Add the drawer here
       body: FutureBuilder<List<Property>>(
         future: apiService.getHostProperties(),
         builder: (context, snapshot) {
@@ -166,11 +168,14 @@ class _HostDashboardPageState extends State<HostDashboardPage> {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
+        onPressed: () async {
+          final result = await Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => AddPropertyPage()),
           );
+          if (result == true) {
+            setState(() {}); // Refresh the properties list
+          }
         },
         backgroundColor: Colors.teal,
         tooltip: 'Add Property',

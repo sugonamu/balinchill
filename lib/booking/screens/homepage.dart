@@ -2,7 +2,7 @@ import 'package:balinchill/env.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:balinchill/widgets/left_drawer.dart';
+import 'package:balinchill/widgets/guest_left_drawer.dart';
 import 'package:balinchill/services/api_service.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
