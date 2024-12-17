@@ -2,10 +2,10 @@ import 'dart:convert';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:balinchill/profile/models/profile.dart';
 import 'package:balinchill/rating/models/rating.dart';
+import 'package:balinchill/host/models/property.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:balinchill/env.dart';  // Import the Env class
-
 
 class ApiService {
   final String baseUrl;
@@ -53,10 +53,11 @@ class ApiService {
 
     return response;
   }
-   // Fetch ratings for a specific hotel
+
+  // Fetch ratings for a specific hotel
   Future<List<Rating>> fetchRatings(int hotelId) async {
     final response = await request.get('${Env.backendUrl}/api/hotels/$hotelId/ratings/');
-    
+
     if (response == null || response['ratings'] == null) {
       throw Exception('Failed to load ratings');
     }
@@ -78,15 +79,14 @@ class ApiService {
     if (response == null) {
       throw Exception('Failed to add rating');
     }
-
-    // Optionally, handle the response data or success
   }
-    Future<void> logout() async {
+
+  // Logout functionality
+  Future<void> logout() async {
     final response = await http.post(
       Uri.parse('$baseUrl/authentication/logout/'),
       headers: {
         'Content-Type': 'application/json',
-        // Include any necessary authentication headers here
       },
     );
     if (response.statusCode == 200) {
@@ -95,7 +95,9 @@ class ApiService {
       throw Exception('Failed to logout');
     }
   }
-    Future<List<Hotel>> fetchHotels() async {
+
+  // Fetch all hotels from the API
+  Future<List<Hotel>> fetchHotels() async {
     final response = await request.get('${Env.backendUrl}/api/hotels/');
 
     if (response == null) {
@@ -105,8 +107,40 @@ class ApiService {
     final List<dynamic> hotelsJson = response;
     return hotelsJson.map((json) => Hotel.fromJson(json)).toList();
   }
+
+  // Fetch all properties for the logged-in host
+  Future<List<Property>> getHostProperties() async {
+    final response = await request.get(
+      '${Env.backendUrl}/propertylistview/',  // Endpoint for host's properties
+    );
+
+    if (response == null) {
+      throw Exception('Failed to load properties');
+    }
+
+    List jsonResponse = response;
+    return jsonResponse.map((data) => Property.fromJson(data)).toList();
+  }
+
+  // Add a property for the logged-in host
+  Future<void> addProperty(Property property) async {
+    final response = await request.post(
+      '${Env.backendUrl}/add_property/',  // Endpoint to add a property
+      {
+        'Hotel': property.hotel,
+        'Category': property.category,
+        'Address': property.address,
+        'Contact': property.contact,
+        'Price': property.price,
+        'Amenities': property.amenities,
+        'Image_URL': property.imageUrl,
+        'Location': property.location,
+        'Page_URL': property.pageUrl,
+      },
+    );
+
+    if (response == null || response['status'] != 'success') {
+      throw Exception('Failed to add property');
+    }
+  }
 }
-
-
-
-
