@@ -121,7 +121,7 @@ class _LoginPageState extends State<LoginPage> {
                                 {
                                   'username': username,
                                   'password': password,
-                                },
+                                },  
                               );
 
                               if (request.loggedIn) {

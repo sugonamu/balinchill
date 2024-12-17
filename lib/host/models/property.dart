@@ -1,7 +1,6 @@
 class Property {
   final String id;
-  final String host;
-  final String hotelName;  
+  final String hotel;
   final String category;
   final String address;
   final String contact;
@@ -13,8 +12,7 @@ class Property {
 
   Property({
     required this.id,
-    required this.host,
-    required this.hotelName,
+    required this.hotel,
     required this.category,
     required this.address,
     required this.contact,
@@ -25,29 +23,24 @@ class Property {
     required this.pageUrl,
   });
 
-  // Factory constructor to create a Property instance from a JSON object
   factory Property.fromJson(Map<String, dynamic> json) {
     return Property(
-      id: json['id'],
-      host: json['host'],  // Assuming the host is passed from the backend
-      hotelName: json['Hotel'],
-      category: json['Category'],
-      address: json['Address'],
-      contact: json['Contact'],
-      price: json['Price'],
-      amenities: json['Amenities'],
-      imageUrl: json['Image_URL'],
-      location: json['Location'],
-      pageUrl: json['Page_URL'],
+      id: json['id'] ?? '',
+      hotel: json['Hotel'] ?? '',
+      category: json['Category'] ?? '',
+      address: json['Address'] ?? '',
+      contact: json['Contact'] ?? '',
+      price: json['Price'] ?? '',
+      amenities: json['Amenities'] ?? '',
+      imageUrl: json['Image_URL'] ?? '',
+      location: json['Location'] ?? '',
+      pageUrl: json['Page_URL'] ?? '',
     );
   }
 
-  // Method to convert the Property instance to a JSON object
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
-      'host': host,
-      'Hotel': hotelName,
+      'Hotel': hotel,
       'Category': category,
       'Address': address,
       'Contact': contact,
