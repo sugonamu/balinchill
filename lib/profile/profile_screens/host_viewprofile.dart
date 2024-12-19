@@ -5,7 +5,7 @@ import 'package:balinchill/profile/models/profile.dart';
 import 'package:balinchill/services/api_service.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:balinchill/env.dart';
-import 'package:balinchill/widgets/guest_left_drawer.dart'; // Import the LeftDrawer
+import 'package:balinchill/widgets/host_left_drawer.dart'; // Import the LeftDrawer
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -92,7 +92,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                     child: Row(
                       children: [
-                        const Icon(Icons.person, color: Color(0xFF1877F2)),
+                        const Icon(Icons.person, color: Color(0xFFB89576)),
                         const SizedBox(width: 10),
                         Expanded(
                           child: Text(
@@ -121,7 +121,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                     child: Row(
                       children: [
-                        const Icon(Icons.email, color: Color(0xFF1877F2)),
+                        const Icon(Icons.email, color: Color(0xFFB89576)),
                         const SizedBox(width: 10),
                         Expanded(
                           child: Text(
@@ -150,7 +150,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                     child: Row(
                       children: [
-                        const Icon(Icons.account_circle, color: Color(0xFF1877F2)),
+                        const Icon(Icons.account_circle, color: Color(0xFFB89576)),
                         const SizedBox(width: 10),
                         Expanded(
                           child: Text(
@@ -179,7 +179,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                     child: Row(
                       children: [
-                        const Icon(Icons.account_circle, color: Color(0xFF1877F2)),
+                        const Icon(Icons.account_circle, color: Color(0xFFB89576)),
                         const SizedBox(width: 10),
                         Expanded(
                           child: Text(
@@ -207,7 +207,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     label: const Text('Edit Profile'),
                     style: ElevatedButton.styleFrom(
                       foregroundColor: Colors.white,
-                      backgroundColor: const Color(0xFF1877F2),
+                      backgroundColor: const Color(0xFFB89576),
                       padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(15),

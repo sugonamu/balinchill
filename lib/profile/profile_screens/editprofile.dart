@@ -20,6 +20,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
   late TextEditingController _firstNameController;
   late TextEditingController _lastNameController;
   String? _selectedImage;
+  String? _usernameError;
 
   final List<String> _availableImages = [
     'profile_pics/image 1.jpg',
@@ -74,7 +75,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Form Fields
-            _buildTextField(_usernameController, 'Username'),
+            _buildTextField(_usernameController, 'Username', _usernameError),
             const SizedBox(height: 16),
             _buildTextField(_emailController, 'Email'),
             const SizedBox(height: 16),
@@ -144,7 +145,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
   }
 
-  TextField _buildTextField(TextEditingController controller, String label) {
+  TextField _buildTextField(TextEditingController controller, String label, [String? errorText]) {
     return TextField(
       controller: controller,
       decoration: InputDecoration(
@@ -157,6 +158,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
           borderSide: BorderSide.none,
         ),
         contentPadding: const EdgeInsets.symmetric(vertical: 15, horizontal: 12),
+        errorText: errorText,
       ),
     );
   }
@@ -174,10 +176,13 @@ class _EditProfilePageState extends State<EditProfilePage> {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Profile updated')));
         Navigator.pop(context);
       } else {
-        throw Exception('Failed to update profile');
+        setState(() {
+          _usernameError = response['message'] ?? 'Failed to update profile';
+        });
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: $e')));
-    }
+      setState(() {
+        _usernameError = 'Error: $e';
+      });
+    }    }
   }
-}

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:balinchill/booking/screens/homepage.dart';
 import 'package:balinchill/screens/login.dart';
-import 'package:balinchill/profile/profile_screens/viewprofile.dart';
+import 'package:balinchill/profile/profile_screens/host_viewprofile.dart';
 import 'package:balinchill/services/api_service.dart';
 
 class LeftDrawer extends StatelessWidget {
