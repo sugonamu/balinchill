@@ -6,7 +6,7 @@ import 'package:balinchill/services/api_service.dart';
 
 class AddRatingPage extends StatefulWidget {
   final int hotelId;
-  final VoidCallback onRatingAdded; // Add callback
+  final VoidCallback onRatingAdded;
 
   const AddRatingPage({required this.hotelId, required this.onRatingAdded});
 
@@ -15,55 +15,80 @@ class AddRatingPage extends StatefulWidget {
 }
 
 class _AddRatingPageState extends State<AddRatingPage> {
-  int _selectedRating = 0; // Store the selected rating
+  int _selectedRating = 0;
   final TextEditingController _reviewController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     final apiService = ApiService(baseUrl: Env.backendUrl, request: context.watch<CookieRequest>());
+    final backgroundColor = const Color(0xFFF5F0E1); // Light beige background
+    final primaryColor = const Color(0xFF997A57); // Tan color
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Add Rating')),
+      backgroundColor: backgroundColor,
+      appBar: AppBar(
+        backgroundColor: primaryColor,
+        title: const Text('Add Rating', style: TextStyle(color: Colors.white)),
+        centerTitle: true,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const Text(
-              'Select Rating:',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              'Rate the Hotel',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF997A57),
+              ),
             ),
-            const SizedBox(height: 8.0),
+            const SizedBox(height: 16.0),
+
+            // Star Rating Row
             Row(
-              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: List.generate(5, (index) {
                 return IconButton(
                   icon: Icon(
                     Icons.star,
-                    color: index < _selectedRating
-                        ? Colors.amber
-                        : Colors.grey,
+                    color: index < _selectedRating ? Colors.amber : Colors.grey,
+                    size: 32,
                   ),
                   onPressed: () {
                     setState(() {
-                      _selectedRating = index + 1; // Update selected rating
+                      _selectedRating = index + 1;
                     });
                   },
                 );
               }),
             ),
             const SizedBox(height: 16.0),
+
+            // Review Text Field
             TextField(
               controller: _reviewController,
-              decoration: const InputDecoration(labelText: 'Review'),
+              maxLines: 4,
+              decoration: InputDecoration(
+                hintText: 'Write your review here...',
+                filled: true,
+                fillColor: Colors.white,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12.0),
+                  borderSide: BorderSide.none,
+                ),
+                contentPadding: const EdgeInsets.all(12.0),
+              ),
             ),
             const SizedBox(height: 20),
+
+            // Submit Button
             ElevatedButton(
               onPressed: () async {
                 final review = _reviewController.text;
 
-                if (_selectedRating >= 1 &&
-                    _selectedRating <= 5 &&
-                    review.isNotEmpty) {
+                if (_selectedRating >= 1 && _selectedRating <= 5 && review.isNotEmpty) {
                   try {
                     final response = await apiService.addRating(widget.hotelId, _selectedRating, review);
 
@@ -89,7 +114,15 @@ class _AddRatingPageState extends State<AddRatingPage> {
                   );
                 }
               },
-              child: const Text('Submit Rating'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: primaryColor,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 14.0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: const Text('Submit Rating', style: TextStyle(fontSize: 16)),
             ),
           ],
         ),
