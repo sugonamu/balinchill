@@ -203,14 +203,14 @@ class _HotelDetailPageState extends State<HotelDetailPage> {
                                 const SizedBox(height: 8.0),
 
                                 // Username and Created Date
-                                Text(
-                                  '${rating.username} - ${rating.createdAt}',
+                               Text(
+                                  '${rating.username} - reviewed at ${rating.createdAt.split('T').first}',
                                   style: const TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: Color(0xFF997A57), // Rich tan
                                   ),
                                 ),
-                                const SizedBox(height: 4.0),
+
 
                                 // Review Text
                                 Text(
