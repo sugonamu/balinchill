@@ -42,23 +42,16 @@ class _HomePageState extends State<HomePage> {
     return 'http://127.0.0.1:8000/proxy-image/?url=${Uri.encodeComponent(originalUrl)}';
   }
 
-  String cleanText(String text) {
-    return text.replaceAll('Â', '').trim();
-  }
-
   List<Hotel> _filterAndSortHotels(List<Hotel> hotels) {
     final filtered = hotels.where((hotel) {
       return hotel.name.toLowerCase().contains(_searchQuery.toLowerCase());
     }).toList();
 
     filtered.sort((a, b) {
-      final aPrice = double.tryParse(cleanText(a.price).replaceAll(RegExp('[^0-9.]'), '')) ?? 0.0;
-      final bPrice = double.tryParse(cleanText(b.price).replaceAll(RegExp('[^0-9.]'), '')) ?? 0.0;
-
       if (_selectedSortOption == 'Low to High') {
-        return aPrice.compareTo(bPrice);
+        return a.price.compareTo(b.price);
       } else {
-        return bPrice.compareTo(aPrice);
+        return b.price.compareTo(a.price);
       }
     });
 
@@ -208,7 +201,7 @@ class _HomePageState extends State<HomePage> {
                                   ),
                                   const SizedBox(height: 4.0),
                                   Text(
-                                    cleanText(hotel.price),
+                                    'Rp ${hotel.price.toInt()}', // Removed decimals
                                     style: const TextStyle(fontSize: 14, color: Colors.grey),
                                   ),
                                   const SizedBox(height: 8.0),
