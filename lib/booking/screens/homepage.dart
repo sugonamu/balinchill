@@ -6,6 +6,8 @@ import 'package:balinchill/widgets/guest_left_drawer.dart';
 import 'package:balinchill/services/api_service.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
+import 'package:balinchill/booking/models/booking.dart'; 
+import 'hotel_detail_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -29,8 +31,7 @@ class _HomePageState extends State<HomePage> {
     final response = await http.get(Uri.parse('http://127.0.0.1:8000/api/hotels/'));
 
     if (response.statusCode == 200) {
-      final List<dynamic> hotelsJson = json.decode(response.body);
-      return hotelsJson.map((json) => Hotel.fromJson(json)).toList();
+      return hotelFromJson(response.body);
     } else {
       throw Exception('Failed to load hotels');
     }
@@ -211,11 +212,11 @@ class _HomePageState extends State<HomePage> {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) => HotelDetailPage(hotel: hotel),
+                                          builder: (context) => HotelDetailPage(hotelId: hotel.id),
                                         ),
                                       );
                                     },
-                                    child: const Text('View Details'),
+                                    child: const Text('Book Now'),
                                   ),
                                 ],
                               ),
@@ -226,94 +227,6 @@ class _HomePageState extends State<HomePage> {
                     },
                   );
                 },
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class Hotel {
-  final int id;
-  final String name;
-  final String? imageUrl;
-  final String price;
-  final String? averageRating;
-
-  Hotel({
-    required this.id,
-    required this.name,
-    required this.imageUrl,
-    required this.price,
-    required this.averageRating,
-  });
-
-  factory Hotel.fromJson(Map<String, dynamic> json) {
-    return Hotel(
-      id: json['id'],
-      name: json['Hotel'],
-      imageUrl: json['Image_URL'],
-      price: json['Price'] ?? '',
-      averageRating: json['avg_rating']?.toString(),
-    );
-  }
-}
-
-class HotelDetailPage extends StatelessWidget {
-  final Hotel hotel;
-
-  const HotelDetailPage({Key? key, required this.hotel}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    final proxiedImageUrl = 'http://127.0.0.1:8000/proxy-image/?url=${Uri.encodeComponent(hotel.imageUrl ?? '')}';
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(hotel.name),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            (hotel.imageUrl != null && hotel.imageUrl!.isNotEmpty)
-                ? Image.network(
-                    proxiedImageUrl,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Image.asset('assets/images/No_image.jpg', fit: BoxFit.cover);
-                    },
-                  )
-                : Image.asset('assets/images/No_image.jpg'),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text(
-                    hotel.name,
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 24.0),
-                  ),
-                  const SizedBox(height: 8.0),
-                  Text(
-                    'Price: ${hotel.price}',
-                    style: const TextStyle(fontSize: 18.0, color: Colors.grey),
-                  ),
-                  const SizedBox(height: 16.0),
-                  if (hotel.averageRating != null)
-                    Text('Average Rating: ${hotel.averageRating}'),
-                  const SizedBox(height: 16.0),
-                  ElevatedButton(
-                    onPressed: () {
-                      // Do something when booking...
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Booking functionality not implemented.')),
-                      );
-                    },
-                    child: const Text('Book Now'),
-                  ),
-                ],
               ),
             ),
           ],

@@ -37,25 +37,25 @@ class Hotel {
     required this.ratingCount,
   });
 
-  // Factory constructor to create a Hotel object from JSON
-  factory Hotel.fromJson(Map<String, dynamic> json) => Hotel(
-        id: json['id'],
-        name: json['Hotel'] ?? 'Unknown Hotel',
-        category: json['Category'],
-        address: json['Address'],
-        contact: json['Contact'],
-        price: json['Price'],
-        amenities: json['Amenities'],
-        imageUrl: json['Image_URL'],
-        location: json['Location'],
-        pageUrl: json['Page_URL'],
-        averageRating: json['avg_rating'] != null
-            ? double.tryParse(json['avg_rating'].toString())
-            : null,
-        ratingCount: json['review_count'] ?? 0,
-      );
+  factory Hotel.fromJson(Map<String, dynamic> json) {
+    return Hotel(
+      id: json['id'],
+      name: json['Hotel'] ?? 'Unknown Hotel',
+      category: json['Category'],
+      address: json['Address'],
+      contact: json['Contact'],
+      price: json['Price'] ?? '',
+      amenities: json['Amenities'],
+      imageUrl: json['Image_URL'],
+      location: json['Location'],
+      pageUrl: json['Page_URL'],
+      averageRating: json['avg_rating'] != null
+          ? double.tryParse(json['avg_rating'].toString())
+          : null,
+      ratingCount: json['review_count'] ?? 0,
+    );
+  }
 
-  // Method to convert a Hotel object to JSON
   Map<String, dynamic> toJson() => {
         'id': id,
         'Hotel': name,
@@ -72,48 +72,90 @@ class Hotel {
       };
 }
 
-// Parse JSON response to a list of Rating objects
-List<Rating> ratingFromJson(String str) =>
-    List<Rating>.from(json.decode(str).map((x) => Rating.fromJson(x)));
+class HotelDetail {
+  final int id;
+  final String name;
+  final String imageUrl;
+  final String price;
+  final String amenities; // Now a single string
+  final String location; // Added location
+  final List<Rating> ratings;
+  final List<HotelBasic> relatedHotels;
 
-// Convert a list of Rating objects to JSON
-String ratingToJson(List<Rating> data) =>
-    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+  HotelDetail({
+    required this.id,
+    required this.name,
+    required this.imageUrl,
+    required this.price,
+    required this.amenities,
+    required this.location, // Include location
+    required this.ratings,
+    required this.relatedHotels,
+  });
+
+  factory HotelDetail.fromJson(Map<String, dynamic> json) {
+    return HotelDetail(
+      id: json['id'],
+      name: json['Hotel'],
+      imageUrl: json['Image_URL'],
+      price: json['Price'],
+      // Directly store Amenities as a single string
+      amenities: (json['Amenities'] as String?)?.trim() ?? '',
+      location: json['Location'] ?? '', // Parse location
+      ratings: (json['ratings'] as List<dynamic>?)
+              ?.map((r) => Rating.fromJson(r))
+              .toList() ??
+          [],
+      relatedHotels: (json['related_hotels'] as List<dynamic>?)
+              ?.map((rh) => HotelBasic.fromJson(rh))
+              .toList() ??
+          [],
+    );
+  }
+}
 
 class Rating {
-  final int id;
-  final int hotelId;
-  final int userId;
-  final int rating;
-  final String? review;
-  final DateTime createdAt;
+  final String username;
+  final double rating;
+  final String review;
+  final String createdAt;
 
   Rating({
-    required this.id,
-    required this.hotelId,
-    required this.userId,
+    required this.username,
     required this.rating,
-    this.review,
+    required this.review,
     required this.createdAt,
   });
 
-  // Factory constructor to create a Rating object from JSON
-  factory Rating.fromJson(Map<String, dynamic> json) => Rating(
-        id: json['id'],
-        hotelId: json['hotel'],
-        userId: json['user'],
-        rating: json['rating'],
-        review: json['review'],
-        createdAt: DateTime.parse(json['created_at']),
-      );
+  factory Rating.fromJson(Map<String, dynamic> json) {
+    return Rating(
+      username: json['user']['username'],
+      rating: (json['rating'] as num).toDouble(),
+      review: json['review'],
+      createdAt: json['created_at'],
+    );
+  }
+}
 
-  // Method to convert a Rating object to JSON
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'hotel': hotelId,
-        'user': userId,
-        'rating': rating,
-        'review': review,
-        'created_at': createdAt.toIso8601String(),
-      };
+class HotelBasic {
+  final int id;
+  final String name;
+  final String imageUrl;
+  final String price;
+
+  HotelBasic({
+    required this.id,
+    required this.name,
+    required this.imageUrl,
+    required this.price,
+  });
+
+  factory HotelBasic.fromJson(Map<String, dynamic> json) {
+    return HotelBasic(
+      id: json['id'],
+      name: json['Hotel'],
+      imageUrl: json['Image_URL'],
+      price: json['Price'],
+    );
+  }
 }
