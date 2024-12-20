@@ -47,7 +47,6 @@ class _HotelDetailPageState extends State<HotelDetailPage> {
   }
 
   String cleanText(String text) {
-    // Remove unwanted characters like Â and trim spaces
     return text.replaceAll('Â', '').trim();
   }
 
@@ -202,52 +201,53 @@ class _HotelDetailPageState extends State<HotelDetailPage> {
                         scrollDirection: Axis.horizontal,
                         child: Row(
                           children: relatedHotels.map((relatedHotel) {
-                            return Container(
-                              width: 200,
-                              margin: const EdgeInsets.only(right: 16.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(10.0),
-                                    child: Image.network(
-                                      getProxyImageUrl(relatedHotel.imageUrl ?? ''),
+                            return GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        HotelDetailPage(hotelId: relatedHotel.id),
+                                  ),
+                                );
+                              },
+                              child: Container(
+                                width: 200,
+                                margin: const EdgeInsets.only(right: 16.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                                  children: [
+                                    // Fixed Height for Image
+                                    Container(
                                       height: 120,
-                                      fit: BoxFit.cover,
-                                      errorBuilder: (context, error, stackTrace) =>
-                                          Image.asset('assets/images/No_image.jpg'),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 8.0),
-                                  Text(
-                                    cleanText(relatedHotel.name),
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xFF997A57), // Rich tan
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  const SizedBox(height: 8.0),
-                                  ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: const Color(0xFF997A57),
-                                      shape: RoundedRectangleBorder(
+                                      decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(10.0),
+                                        color: Colors.grey[300],
                                       ),
-                                      foregroundColor: Colors.white, // Button text white
-                                    ),
-                                    onPressed: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              HotelDetailPage(hotelId: relatedHotel.id),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(10.0),
+                                        child: Image.network(
+                                          getProxyImageUrl(relatedHotel.imageUrl ?? ''),
+                                          height: 120,
+                                          fit: BoxFit.cover,
+                                          errorBuilder: (context, error, stackTrace) =>
+                                              Image.asset('assets/images/No_image.jpg'),
                                         ),
-                                      );
-                                    },
-                                    child: const Text('Book Now'),
-                                  ),
-                                ],
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8.0),
+                                    Text(
+                                      cleanText(relatedHotel.name),
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Color(0xFF997A57), // Rich tan
+                                      ),
+                                      textAlign: TextAlign.center,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ],
+                                ),
                               ),
                             );
                           }).toList(),
