@@ -1,3 +1,4 @@
+import 'package:balinchill/payment/screens/booking_history.dart';
 import 'package:flutter/material.dart';
 import 'package:balinchill/booking/screens/homepage.dart';
 import 'package:balinchill/screens/login.dart';
@@ -34,6 +35,16 @@ class LeftDrawer extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => HomePage()),
+              );
+            },
+          ),
+            ListTile(
+            leading: Icon(Icons.hotel),
+            title: Text('History'),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => BookingHistoryPage()),
               );
             },
           ),

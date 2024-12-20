@@ -19,6 +19,7 @@ List<Hotel> hotelFromJson(String str) =>
 String hotelToJson(List<Hotel> data) =>
     json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
+
 class Hotel {
   final int id;
   final String name;

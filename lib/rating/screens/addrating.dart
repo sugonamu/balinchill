@@ -18,8 +18,7 @@ class _AddRatingPageState extends State<AddRatingPage> {
 
   @override
   Widget build(BuildContext context) {
-    final request = context.watch<CookieRequest>(); // Use the global CookieRequest
-
+    final request = context.watch<CookieRequest>();
     return Scaffold(
       appBar: AppBar(title: const Text('Add Rating')),
       body: Padding(

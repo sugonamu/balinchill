@@ -1,12 +1,13 @@
 import 'dart:convert';
 
-List<Transaction> transactionFromJson(String str) => List<Transaction>.from(json.decode(str).map((x) => Transaction.fromJson(x)));
+List<Transaction> transactionFromJson(dynamic data) =>
+    List<Transaction>.from(data.map((x) => Transaction.fromJson(x)));
 String transactionToJson(List<Transaction> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class Transaction {
   final int id;
-  final String user;
-  final String hotel;
+  final int user;
+  final int hotel;
   final double totalPrice;
   final String phoneNumber;
   final String creditCardNumber;

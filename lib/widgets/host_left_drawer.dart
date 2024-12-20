@@ -1,5 +1,6 @@
 import 'package:balinchill/host/screens/addproperty.dart';
 import 'package:balinchill/host/screens/host.dart';
+import 'package:balinchill/payment/screens/booking_history.dart';
 import 'package:flutter/material.dart';
 import 'package:balinchill/screens/login.dart';
 import 'package:balinchill/profile/profile_screens/host_viewprofile.dart';
