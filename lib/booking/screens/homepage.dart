@@ -1,11 +1,10 @@
+import 'package:balinchill/env.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:balinchill/widgets/guest_left_drawer.dart';
 import 'package:balinchill/services/api_service.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
-import 'package:balinchill/booking/models/booking.dart';
+import 'package:balinchill/booking/models/booking.dart' as booking;
 import 'hotel_detail_page.dart';
 
 class HomePage extends StatefulWidget {
@@ -17,7 +16,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  late Future<List<Hotel>> _hotelsFuture;
+  late Future<List<booking.Hotel>> _hotelsFuture;
   String _selectedSortOption = 'Ascending';
   String _searchQuery = '';
 
@@ -27,21 +26,23 @@ class _HomePageState extends State<HomePage> {
     _hotelsFuture = fetchHotels();
   }
 
-  Future<List<Hotel>> fetchHotels() async {
-    final response = await http.get(Uri.parse('http://127.0.0.1:8000/api/hotels/'));
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _hotelsFuture = fetchHotels(); // Refresh the hotels list when dependencies change
+  }
 
-    if (response.statusCode == 200) {
-      return hotelFromJson(response.body);
-    } else {
-      throw Exception('Failed to load hotels');
-    }
+  Future<List<booking.Hotel>> fetchHotels() async {
+    final apiService = ApiService(baseUrl: Env.backendUrl, request: context.read<CookieRequest>());
+    return await apiService.fetchHotels();
   }
 
   String getProxyImageUrl(String originalUrl) {
-    return 'http://127.0.0.1:8000/proxy-image/?url=${Uri.encodeComponent(originalUrl)}';
+    final apiService = ApiService(baseUrl: Env.backendUrl, request: context.read<CookieRequest>());
+    return apiService.getProxyImageUrl(originalUrl);
   }
 
-  List<Hotel> _filterAndSortHotels(List<Hotel> hotels) {
+  List<booking.Hotel> _filterAndSortHotels(List<booking.Hotel> hotels) {
     final filtered = hotels.where((hotel) {
       return hotel.name.toLowerCase().contains(_searchQuery.toLowerCase());
     }).toList();
@@ -119,7 +120,7 @@ class _HomePageState extends State<HomePage> {
         title: const Text('Home Page', style: TextStyle(color: Colors.white)),
         centerTitle: true,
       ),
-      drawer: LeftDrawer(apiService: ApiService(baseUrl: 'YOUR_BASE_URL', request: request)),
+      drawer: LeftDrawer(apiService: ApiService(baseUrl: Env.backendUrl, request: request)),
       body: SafeArea(
         child: Column(
           children: [
@@ -169,7 +170,7 @@ class _HomePageState extends State<HomePage> {
 
             // Hotel List
             Expanded(
-              child: FutureBuilder<List<Hotel>>(
+              child: FutureBuilder<List<booking.Hotel>>(
                 future: _hotelsFuture,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
@@ -195,14 +196,18 @@ class _HomePageState extends State<HomePage> {
                             MaterialPageRoute(
                               builder: (context) => HotelDetailPage(hotelId: hotel.id),
                             ),
-                          );
+                          ).then((_) {
+                            // Refresh the homepage when returning from the hotel detail page
+                            setState(() {
+                              _hotelsFuture = fetchHotels();
+                            });
+                          });
                         },
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                           child: Card(
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16.0),
-                            ),
+                              borderRadius: BorderRadius.circular(16.0)),
                             elevation: 4.0,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,

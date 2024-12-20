@@ -36,4 +36,6 @@ class Rating {
       review: json['review'] ?? '',
     );
   }
+
+  get fields => null;
 }

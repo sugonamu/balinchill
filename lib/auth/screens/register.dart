@@ -1,9 +1,9 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:balinchill/screens/login.dart';
+import 'package:balinchill/auth/screens/login.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:balinchill/env.dart';
+import 'package:balinchill/services/api_service.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -21,6 +21,8 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
+    final apiService = ApiService(baseUrl: Env.backendUrl, request: request);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Register'),
@@ -152,38 +154,36 @@ class _RegisterPageState extends State<RegisterPage> {
                         return;
                       }
 
-                      final response = await request.postJson(
-                        "${Env.backendUrl}/auth/register/",
-                        jsonEncode({
-                          "username": username,
-                          "password1": password1,
-                          "password2": password2,
-                          "role": _selectedRole,
-                        }),
-                      );
+                      try {
+                        final response = await apiService.register(username, password1, password2, _selectedRole!);
 
-                      if (context.mounted) {
-                        if (response['status'] == 'success') {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                'Successfully registered! Username: $username, Role: $_selectedRole',
+                        if (context.mounted) {
+                          if (response['status'] == 'success') {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  'Successfully registered! Username: $username, Role: $_selectedRole',
+                                ),
                               ),
-                            ),
-                          );
-                          Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => LoginPage(selectedRole: _selectedRole),
-                            ),
-                          );
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(response['message'] ?? 'Failed to register!'),
-                            ),
-                          );
+                            );
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => LoginPage(selectedRole: _selectedRole),
+                              ),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(response['message'] ?? 'Failed to register!'),
+                              ),
+                            );
+                          }
                         }
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Failed to register: $e')),
+                        );
                       }
                     },
                     style: ElevatedButton.styleFrom(

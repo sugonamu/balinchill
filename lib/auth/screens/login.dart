@@ -1,12 +1,11 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:balinchill/screens/register.dart';
+import 'package:balinchill/auth/screens/register.dart';
 import 'package:balinchill/host/screens/host.dart';
-import 'package:balinchill/screens/guest.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:balinchill/booking/screens/homepage.dart';
 import 'package:balinchill/env.dart';
+import 'package:balinchill/services/api_service.dart';
 
 void main() {
   runApp(const LoginApp());
@@ -46,6 +45,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
+    final apiService = ApiService(baseUrl: Env.backendUrl, request: request);
 
     return Scaffold(
       appBar: AppBar(
@@ -109,68 +109,68 @@ class _LoginPageState extends State<LoginPage> {
                             String username = _usernameController.text;
                             String password = _passwordController.text;
 
-                            final response = await request.login(
-                              "${Env.backendUrl}/auth/login/",
-                              {
-                                'username': username,
-                                'password': password,
-                              },
-                            );
+                            try {
+                              final response = await apiService.login(username, password);
 
-                            if (request.loggedIn) {
-                              String message = response['message'] ?? 'No message provided';
-                              String uname = response['username'] ?? 'Unknown user';
-                              String role = response['role'] ?? '';
+                              if (request.loggedIn) {
+                                String message = response['message'] ?? 'No message provided';
+                                String uname = response['username'] ?? 'Unknown user';
+                                String role = response['role'] ?? '';
 
-                              if (context.mounted) {
-                                print("Response: $response");
+                                if (context.mounted) {
+                                  print("Response: $response");
 
-                                if (role.isNotEmpty) {
-                                  if (role == 'host') {
-                                    Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(builder: (context) => HostDashboardPage()),
-                                    );
-                                  } else if (role == 'guest') {
-                                    Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(builder: (context) => const HomePage()),
-                                    );
+                                  if (role.isNotEmpty) {
+                                    if (role == 'host') {
+                                      Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(builder: (context) => HostDashboardPage()),
+                                      );
+                                    } else if (role == 'guest') {
+                                      Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(builder: (context) => const HomePage()),
+                                      );
+                                    } else {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(content: Text('Invalid role assigned!')),
+                                      );
+                                    }
                                   } else {
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(content: Text('Invalid role assigned!')),
+                                      const SnackBar(content: Text('Role is missing from the response!')),
                                     );
                                   }
-                                } else {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(content: Text('Role is missing from the response!')),
+
+                                  ScaffoldMessenger.of(context)
+                                    ..hideCurrentSnackBar()
+                                    ..showSnackBar(
+                                      SnackBar(content: Text("$message Welcome, $uname. Your role: $role")),
+                                    );
+                                }
+                              } else {
+                                if (context.mounted) {
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                      title: const Text('Login Failed'),
+                                      content: Text(response['message'] ?? 'Login failed without message'),
+                                      actions: [
+                                        TextButton(
+                                          child: const Text('OK'),
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                          },
+                                        ),
+                                      ],
+                                    ),
                                   );
                                 }
-
-                                ScaffoldMessenger.of(context)
-                                  ..hideCurrentSnackBar()
-                                  ..showSnackBar(
-                                    SnackBar(content: Text("$message Welcome, $uname. Your role: $role")),
-                                  );
                               }
-                            } else {
-                              if (context.mounted) {
-                                showDialog(
-                                  context: context,
-                                  builder: (context) => AlertDialog(
-                                    title: const Text('Login Failed'),
-                                    content: Text(response['message'] ?? 'Login failed without message'),
-                                    actions: [
-                                      TextButton(
-                                        child: const Text('OK'),
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              }
+                            } catch (e) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('Failed to login: $e')),
+                              );
                             }
                           },
                           style: ElevatedButton.styleFrom(

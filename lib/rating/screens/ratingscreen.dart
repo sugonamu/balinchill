@@ -1,76 +1,35 @@
+import 'package:balinchill/booking/models/booking.dart' as booking;
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-
-// Rating and Fields model
-class Fields {
-  final int hotel;
-  final int user;
-  final int rating;
-  final String? review;
-  final DateTime createdAt;
-
-  Fields({
-    required this.hotel,
-    required this.user,
-    required this.rating,
-    this.review,
-    required this.createdAt,
-  });
-
-  factory Fields.fromJson(Map<String, dynamic> json) => Fields(
-        hotel: json["hotel"],
-        user: json["user"],
-        rating: json["rating"],
-        review: json["review"],
-        createdAt: DateTime.parse(json["created_at"]),
-      );
-}
-
-class Rating {
-  final Fields fields;
-
-  Rating({
-    required this.fields,
-  });
-
-  factory Rating.fromJson(Map<String, dynamic> json) =>
-      Rating(fields: Fields.fromJson(json["fields"]));
-}
+import 'package:provider/provider.dart';
+import 'package:balinchill/services/api_service.dart';
+import 'package:balinchill/rating/models/rating.dart' as rating;
 
 class RatingsScreen extends StatefulWidget {
-  const RatingsScreen({Key? key}) : super(key: key);
+  const RatingsScreen({super.key});
 
   @override
-  _RatingsScreenState createState() => _RatingsScreenState();
+  RatingsScreenState createState() => RatingsScreenState();
 }
 
-class _RatingsScreenState extends State<RatingsScreen> {
-  late Future<List<Rating>> _ratings;
-
-  // Fetch data from Django API
-  Future<List<Rating>> fetchRatings() async {
-    final response = await http.get(Uri.parse('http://127.0.0.1:8000/ratings/json/')); 
-
-    if (response.statusCode == 200) {
-      List<dynamic> data = json.decode(response.body);
-      return data.map((rating) => Rating.fromJson(rating)).toList();
-    } else {
-      throw Exception('Failed to load ratings');
-    }
-  }
+class RatingsScreenState extends State<RatingsScreen> {
+  late Future<List<rating.Rating>> _ratings;
 
   @override
   void initState() {
     super.initState();
-    _ratings = fetchRatings(); // Fetch data when the screen loads
+    _ratings = fetchAllRatings() as Future<List<rating.Rating>>; // Fetch data when the screen loads
+  }
+
+  Future<List<booking.Rating>> fetchAllRatings() async {
+    final apiService = Provider.of<ApiService>(context, listen: false);
+    return await apiService.fetchAllRatings();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("Ratings Test Screen")),
-      body: FutureBuilder<List<Rating>>(
+      body: FutureBuilder<List<rating.Rating>>(
         future: _ratings,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {

@@ -4,6 +4,10 @@ import 'package:http/http.dart' as http;
 import 'package:balinchill/booking/models/booking.dart'; // Ensure correct import path
 import 'package:balinchill/payment/screens/payment_page.dart'; // Ensure correct import path
 import 'package:balinchill/rating/screens/addrating.dart'; 
+import 'package:balinchill/services/api_service.dart';
+import 'package:balinchill/env.dart';
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
 class HotelDetailPage extends StatefulWidget {
   final int hotelId;
 
@@ -16,37 +20,22 @@ class HotelDetailPage extends StatefulWidget {
 class _HotelDetailPageState extends State<HotelDetailPage> {
   late Future<HotelDetail> _hotelDetailFuture;
   late Future<List<Hotel>> _relatedHotelsFuture;
+  final ApiService _apiService = ApiService(baseUrl: Env.backendUrl, request: CookieRequest());
+
 
   @override
   void initState() {
     super.initState();
-    _hotelDetailFuture = fetchHotelDetail(widget.hotelId);
-    _relatedHotelsFuture = fetchHotels();
+    _hotelDetailFuture = _apiService.fetchHotelDetail(widget.hotelId);
+    _relatedHotelsFuture = _apiService.fetchHotels();
   }
 
-  Future<HotelDetail> fetchHotelDetail(int id) async {
-    final response = await http.get(Uri.parse('http://127.0.0.1:8000/api/hotels/$id/'));
-    if (response.statusCode == 200) {
-      final data = jsonDecode(response.body);
-      return HotelDetail.fromJson(data);
-    } else {
-      throw Exception('Failed to load hotel details');
-    }
-  }
-
-  Future<List<Hotel>> fetchHotels() async {
-    final response = await http.get(Uri.parse('http://127.0.0.1:8000/api/hotels/'));
-    if (response.statusCode == 200) {
-      return hotelFromJson(response.body);
-    } else {
-      throw Exception('Failed to load hotels');
-    }
-  }
 
   String getProxyImageUrl(String originalUrl) {
-    return 'http://127.0.0.1:8000/proxy-image/?url=${Uri.encodeComponent(originalUrl)}';
+    final apiService = ApiService(baseUrl: Env.backendUrl, request: context.read<CookieRequest>());
+    return apiService.getProxyImageUrl(originalUrl);
   }
-
+  
   String cleanText(String text) {
     return text.replaceAll('Â', '').trim();
   }
@@ -244,12 +233,19 @@ class _HotelDetailPageState extends State<HotelDetailPage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => AddRatingPage(hotelId: hotelDetail.id),
+                            builder: (context) => AddRatingPage(
+                              hotelId: hotelDetail.id,
+                              onRatingAdded: () {
+                                setState(() {
+                                  _hotelDetailFuture = _apiService.fetchHotelDetail(widget.hotelId);
+                                });
+                              },
+                            ),
                           ),
                         ).then((_) {
                           // Refresh hotel details after returning
                           setState(() {
-                            _hotelDetailFuture = fetchHotelDetail(widget.hotelId);
+                            _hotelDetailFuture = _apiService.fetchHotelDetail(widget.hotelId);
                           });
                         });
                       },

@@ -2,6 +2,7 @@ import 'package:balinchill/env.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:balinchill/services/api_service.dart';
 
 class PaymentPage extends StatefulWidget {
   final int hotelId;
@@ -26,6 +27,7 @@ class _PaymentPageState extends State<PaymentPage> {
   @override
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
+    final apiService = ApiService(baseUrl: Env.backendUrl, request: request);
 
     return Scaffold(
       appBar: AppBar(
@@ -70,30 +72,33 @@ class _PaymentPageState extends State<PaymentPage> {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
-                final response = await request.post(
-                  'http://127.0.0.1:8000/payment/process-payment/',
-                  {
-                    'full_name': _fullNameController.text,
-                    'email': _emailController.text,
-                    'mobile_number': _mobileNumberController.text,
-                    'credit_card_number': _creditCardNumberController.text,
-                    'valid_thru': _validThruController.text,
-                    'cvv': _cvvController.text,
-                    'card_name': _cardNameController.text,
-                    'booking_date': _bookingDateController.text,
-                    'hotel_id': widget.hotelId.toString(),
-                    'price': widget.price,
-                  },
-                );
-
-                if (response['status'] == 'success') {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('${response['message']}\nTransaction ID: ${response['transaction_id']}')),
+                try {
+                  final response = await apiService.processPayment(
+                    fullName: _fullNameController.text,
+                    email: _emailController.text,
+                    mobileNumber: _mobileNumberController.text,
+                    creditCardNumber: _creditCardNumberController.text,
+                    validThru: _validThruController.text,
+                    cvv: _cvvController.text,
+                    cardName: _cardNameController.text,
+                    bookingDate: _bookingDateController.text,
+                    hotelId: widget.hotelId,
+                    price: widget.price,
                   );
-                  Navigator.pop(context);
-                } else {
+
+                  if (response['status'] == 'success') {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('${response['message']}\nTransaction ID: ${response['transaction_id']}')),
+                    );
+                    Navigator.pop(context);
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(response['message'])),
+                    );
+                  }
+                } catch (e) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(response['message'])),
+                    SnackBar(content: Text('Failed to process payment: $e')),
                   );
                 }
               },

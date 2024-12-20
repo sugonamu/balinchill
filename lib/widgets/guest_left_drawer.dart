@@ -1,7 +1,7 @@
 import 'package:balinchill/payment/screens/booking_history.dart';
 import 'package:flutter/material.dart';
 import 'package:balinchill/booking/screens/homepage.dart';
-import 'package:balinchill/screens/login.dart';
+import 'package:balinchill/auth/screens/login.dart';
 import 'package:balinchill/profile/profile_screens/guest_viewprofile.dart';
 import 'package:balinchill/services/api_service.dart';
 

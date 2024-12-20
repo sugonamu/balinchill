@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:balinchill/screens/login.dart';
+import 'package:balinchill/auth/screens/login.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';  
 import 'package:provider/provider.dart';
 

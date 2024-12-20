@@ -1,9 +1,10 @@
+import 'package:balinchill/env.dart';
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
-import 'dart:convert';
 import '../models/payment.dart';
 import '../../booking/models/booking.dart'; // Import the Hotel model
+import '../../services/api_service.dart'; // Import ApiService
 
 class BookingHistoryPage extends StatefulWidget {
   @override
@@ -14,10 +15,12 @@ class _BookingHistoryPageState extends State<BookingHistoryPage> {
   List<Transaction> _transactions = [];
   Map<int, String> _hotelNames = {}; // Map to store hotel names
   Map<int, String> _hotelImages = {}; // Map to store hotel images
+  late ApiService _apiService;
 
   @override
   void initState() {
     super.initState();
+    _apiService = ApiService(baseUrl: Env.backendUrl, request: Provider.of<CookieRequest>(context, listen: false));
   }
 
   @override
@@ -27,29 +30,15 @@ class _BookingHistoryPageState extends State<BookingHistoryPage> {
   }
 
   Future<void> fetchBookingHistory() async {
-    final request = Provider.of<CookieRequest>(context, listen: false);
     try {
-      final response = await request.get(
-        'http://127.0.0.1:8000/payment/booking_history/',
-      );
+      final transactions = await _apiService.fetchBookingHistory();
+      setState(() {
+        _transactions = transactions;
+      });
 
-      if (response != null && response.isNotEmpty) {
-        try {
-          final transactions = transactionFromJson(response);
-          setState(() {
-            _transactions = transactions;
-          });
-
-          // Fetch hotel names for each transaction
-          for (var transaction in _transactions) {
-            fetchHotelName(transaction.hotel);
-          }
-        } catch (e) {
-          print('Error parsing booking history JSON: $e');
-          print('Response: $response');
-        }
-      } else {
-        // Handle empty response
+      // Fetch hotel names for each transaction
+      for (var transaction in _transactions) {
+        fetchHotelName(transaction.hotel);
       }
     } catch (e) {
       print('Error fetching booking history: $e');
@@ -58,26 +47,12 @@ class _BookingHistoryPageState extends State<BookingHistoryPage> {
   }
 
   Future<void> fetchHotelName(int id) async {
-    final request = Provider.of<CookieRequest>(context, listen: false);
     try {
-      final response = await request.get(
-        'http://127.0.0.1:8000/api/hotels/$id/',
-      );
-
-      if (response != null && response.isNotEmpty) {
-        try {
-          final hotel = Hotel.fromJson(response);
-          setState(() {
-            _hotelNames[id] = hotel.name;
-            _hotelImages[id] = hotel.imageUrl ?? ''; // Store hotel image URL
-          });
-        } catch (e) {
-          print('Error parsing hotel JSON: $e');
-          print('Response: $response');
-        }
-      } else {
-        // Handle empty response
-      }
+      final hotel = await _apiService.fetchHotelDetail(id);
+      setState(() {
+        _hotelNames[id] = hotel.name;
+        _hotelImages[id] = hotel.imageUrl ?? ''; // Store hotel image URL
+      });
     } catch (e) {
       print('Error fetching hotel name: $e');
       // Handle error, e.g., show a message to the user
@@ -85,7 +60,7 @@ class _BookingHistoryPageState extends State<BookingHistoryPage> {
   }
 
   String getProxyImageUrl(String originalUrl) {
-    return 'http://127.0.0.1:8000/proxy-image/?url=${Uri.encodeComponent(originalUrl)}';
+    return _apiService.getProxyImageUrl(originalUrl);
   }
 
   @override

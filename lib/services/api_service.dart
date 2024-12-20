@@ -1,11 +1,15 @@
 import 'dart:convert';
+import 'package:balinchill/payment/models/payment.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:balinchill/profile/models/profile.dart';
-import 'package:balinchill/rating/models/rating.dart';
+import 'package:balinchill/rating/models/rating.dart' as rating;
 import 'package:balinchill/host/models/property.dart';
+import 'package:balinchill/booking/models/booking.dart' as booking;
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
-import 'package:balinchill/env.dart';  // Import the Env class
+import 'package:balinchill/env.dart';
+
+import '../booking/models/booking.dart';  // Import the Env class
 
 class ApiService {
   final String baseUrl;
@@ -65,40 +69,17 @@ class ApiService {
     List jsonData = response['ratings'];
     return jsonData.map((rating) => Rating.fromJson(rating)).toList();
   }
-Future<void> addRating(int hotelId, int ratingValue, String review) async {
-  try {
-    print('Adding rating to: ${Env.backendUrl}/api/hotels/$hotelId/add-rating/');
-    print('Payload: rating=$ratingValue, review=$review');
-    print('Request Headers: ${request.headers}'); // Log headers
-
-    final response = await request.post(
-      '${Env.backendUrl}/api/hotels/$hotelId/add-rating/',
-      {
-        'rating': ratingValue.toString(),
-        'review': review,
-      },
-    );
-
-    if (response == null || response['status'] != 'success') {
-      throw Exception('Failed to add rating: ${response?.toString()}');
-    }
-  } catch (e) {
-    print('Error adding rating: $e');
-    throw Exception('Failed to add rating');
-  }
-}
-
-
 
 
   // Logout functionality
   Future<void> logout() async {
     final response = await http.post(
-      Uri.parse('$baseUrl/authentication/logout/'),
+      Uri.parse('$baseUrl/auth/logout/'),
       headers: {
         'Content-Type': 'application/json',
       },
     );
+
     if (response.statusCode == 200) {
       // Logout successful
     } else {
@@ -107,7 +88,7 @@ Future<void> addRating(int hotelId, int ratingValue, String review) async {
   }
 
   // Fetch all hotels from the API
-  Future<List<Hotel>> fetchHotels() async {
+  Future<List<booking.Hotel>> fetchHotels() async {
     final response = await request.get('${Env.backendUrl}/api/hotels/');
 
     if (response == null) {
@@ -115,7 +96,12 @@ Future<void> addRating(int hotelId, int ratingValue, String review) async {
     }
 
     final List<dynamic> hotelsJson = response;
-    return hotelsJson.map((json) => Hotel.fromJson(json)).toList();
+    return hotelsJson.map((json) => booking.Hotel.fromJson(json)).toList();
+  }
+
+  // Get proxy image URL
+  String getProxyImageUrl(String originalUrl) {
+    return '${Env.backendUrl}/proxy-image/?url=${Uri.encodeComponent(originalUrl)}';
   }
 
   // Fetch all properties for the logged-in host
@@ -135,24 +121,15 @@ Future<void> addRating(int hotelId, int ratingValue, String review) async {
   // Add a property for the logged-in host
   Future<void> addProperty(Property property) async {
     final response = await request.post(
-      '${Env.backendUrl}/add_property/',  // Endpoint to add a property
-      {
-        'Hotel': property.hotel,
-        'Category': property.category,
-        'Address': property.address,
-        'Contact': property.contact,
-        'Price': property.price,
-        'Amenities': property.amenities,
-        'Image_URL': property.imageUrl,
-        'Location': property.location,
-        'Page_URL': property.pageUrl,
-      },
+      '${Env.backendUrl}/addproperty/',
+      property.toJson(),
     );
 
-    if (response == null || response['status'] != 'success') {
+    if (response == null) {
       throw Exception('Failed to add property');
     }
   }
+
 
     Future<Map<String, dynamic>> deleteProperty(String propertyId) async {
     final url = Uri.parse('${Env.backendUrl}/delete/$propertyId/');
@@ -177,4 +154,114 @@ Future<void> addRating(int hotelId, int ratingValue, String review) async {
       throw Exception('Error: $e');
     }
   }
+    Future<HotelDetail> fetchHotelDetail(int id) async {
+    final response = await request.get('${Env.backendUrl}/api/hotels/$id/');
+    if (response == null) {
+      throw Exception('Failed to load hotel details');
+    }
+    return HotelDetail.fromJson(response);
+  }
+    Future<List<Transaction>> fetchBookingHistory() async {
+    final response = await request.get('${Env.backendUrl}/payment/booking_history/');
+    if (response == null || response.isEmpty) {
+      throw Exception('Failed to load booking history');
+    }
+    return transactionFromJson(response);
+  }
+
+
+  Future<Map<String, dynamic>> processPayment({
+    required String fullName,
+    required String email,
+    required String mobileNumber,
+    required String creditCardNumber,
+    required String validThru,
+    required String cvv,
+    required String cardName,
+    required String bookingDate,
+    required int hotelId,
+    required String price,
+  }) async {
+    final response = await request.post(
+      '${Env.backendUrl}/payment/process-payment/',
+      {
+        'full_name': fullName,
+        'email': email,
+        'mobile_number': mobileNumber,
+        'credit_card_number': creditCardNumber,
+        'valid_thru': validThru,
+        'cvv': cvv,
+        'card_name': cardName,
+        'booking_date': bookingDate,
+        'hotel_id': hotelId.toString(),
+        'price': price,
+      },
+    );
+
+    if (response == null) {
+      throw Exception('Failed to process payment');
+    }
+
+    return response;
+  }
+
+    Future<List<Rating>> fetchAllRatings() async {
+    final response = await request.get('${Env.backendUrl}/ratings/json/');
+
+    if (response == null) {
+      throw Exception('Failed to load ratings');
+    }
+
+    List<dynamic> data = response;
+    return data.map((rating) => Rating.fromJson(rating)).toList();
+  }
+  Future<Map<String, dynamic>> addRating(int hotelId, int ratingValue, String review) async {
+    final response = await request.post(
+      '${Env.backendUrl}/api/hotels/$hotelId/add-rating/',
+      {
+        'rating': ratingValue.toString(),
+        'review': review,
+      },
+    );
+
+    if (response == null) {
+      throw Exception('Failed to add rating');
+    }
+
+    return response;
+  }
+  Future<Map<String, dynamic>> login(String username, String password) async {
+     final response = await request.login(
+      '${Env.backendUrl}/auth/login/',
+      {
+        'username': username,
+        'password': password,
+      },
+    );
+
+    if (response == null) {
+      throw Exception('Failed to login');
+    }
+
+    return response;
+  }
+
+  Future<Map<String, dynamic>> register(String username, String password1, String password2, String role) async {
+    final response = await request.postJson(
+      "${Env.backendUrl}/auth/register/",
+      jsonEncode({
+        "username": username,
+        "password1": password1,
+        "password2": password2,
+        "role": role,
+      }),
+    );
+
+    if (response == null) {
+      throw Exception('Failed to register');
+    }
+
+    return response;
+  }
+
 }

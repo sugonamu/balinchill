@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:balinchill/env.dart';
+import 'package:balinchill/services/api_service.dart';
 
 class AddRatingPage extends StatefulWidget {
   final int hotelId;
+  final VoidCallback onRatingAdded; // Add callback
 
-  const AddRatingPage({required this.hotelId});
+  const AddRatingPage({required this.hotelId, required this.onRatingAdded});
 
   @override
   _AddRatingPageState createState() => _AddRatingPageState();
@@ -18,7 +20,7 @@ class _AddRatingPageState extends State<AddRatingPage> {
 
   @override
   Widget build(BuildContext context) {
-    final request = context.watch<CookieRequest>();
+    final apiService = ApiService(baseUrl: Env.backendUrl, request: context.watch<CookieRequest>());
     return Scaffold(
       appBar: AppBar(title: const Text('Add Rating')),
       body: Padding(
@@ -63,19 +65,13 @@ class _AddRatingPageState extends State<AddRatingPage> {
                     _selectedRating <= 5 &&
                     review.isNotEmpty) {
                   try {
-                    // Make POST request to add the rating
-                    final response = await request.post(
-                      '${Env.backendUrl}/api/hotels/${widget.hotelId}/add-rating/',
-                      {
-                        'rating': _selectedRating.toString(),
-                        'review': review,
-                      },
-                    );
+                    final response = await apiService.addRating(widget.hotelId, _selectedRating, review);
 
                     if (response['status'] == 'success') {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('Rating added successfully')),
                       );
+                      widget.onRatingAdded(); // Call the callback
                       Navigator.pop(context); // Go back to the previous screen
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
