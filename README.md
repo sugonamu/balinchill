@@ -1,7 +1,7 @@
 ## **List of group member names**
 Made Izzy Prema Darma <br>
 Damar Aryaputra Rahman <br> 
-Serafina Nala Tri Setiawan <br>
+Serafina Nala Putri Setiawan <br>
 William Samuel Mulya <br>
 Zakiy Makarim Iskandar Daulay <br>
 Muhammad Brian Subekti <br>
@@ -85,3 +85,11 @@ This application integrates a Flutter mobile frontend with a Django backend web 
 ***API Endpoint***: ```POST /users/update_profile_flutter/``` 
 
 ***Description***: This endpoint updates the user's profile information. The EditProfilePage in ```editprofile.dart``` sends a POST request with the updated profile data to this endpoint. Upon successful update, the profile information is saved, and the user is notified.
+
+**Authentication**
+
+***Feature***: Display a registration form for new users to create an account and a login form for existing users to enter their username and password to access their accounts.
+
+***API Endpoint***: POST /auth/login/
+
+***Description***: Allows users to log in by providing their username and password. Validates credentials and returns a response indicating success or failure.
