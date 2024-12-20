@@ -1,5 +1,16 @@
 import 'dart:convert';
 
+// Utility function to clean unwanted symbols and parse numeric values
+int sanitizeAndParsePrice(String text) {
+  final sanitizedText = text.replaceAll('Â', '').replaceAll(RegExp('[^0-9]'), '').trim();
+  return int.tryParse(sanitizedText) ?? 0; // Default to 0 if parsing fails
+}
+
+// Utility function to clean other text fields
+String sanitizeText(String text) {
+  return text.replaceAll('Â', '').trim();
+}
+
 // Parse JSON response to a list of Hotel objects
 List<Hotel> hotelFromJson(String str) =>
     List<Hotel>.from(json.decode(str).map((x) => Hotel.fromJson(x)));
@@ -14,7 +25,7 @@ class Hotel {
   final String? category;
   final String? address;
   final String? contact;
-  final String price;
+  final int price; // Changed to int
   final String? amenities;
   final String? imageUrl;
   final String? location;
@@ -40,14 +51,14 @@ class Hotel {
   factory Hotel.fromJson(Map<String, dynamic> json) {
     return Hotel(
       id: json['id'],
-      name: json['Hotel'] ?? 'Unknown Hotel',
+      name: sanitizeText(json['Hotel'] ?? 'Unknown Hotel'),
       category: json['Category'],
-      address: json['Address'],
-      contact: json['Contact'],
-      price: json['Price'] ?? '',
-      amenities: json['Amenities'],
+      address: sanitizeText(json['Address'] ?? ''),
+      contact: sanitizeText(json['Contact'] ?? ''),
+      price: sanitizeAndParsePrice(json['Price']), // Parse price as int
+      amenities: sanitizeText(json['Amenities'] ?? ''),
       imageUrl: json['Image_URL'],
-      location: json['Location'],
+      location: sanitizeText(json['Location'] ?? ''),
       pageUrl: json['Page_URL'],
       averageRating: json['avg_rating'] != null
           ? double.tryParse(json['avg_rating'].toString())
@@ -62,7 +73,7 @@ class Hotel {
         'Category': category,
         'Address': address,
         'Contact': contact,
-        'Price': price,
+        'Price': price.toString(),
         'Amenities': amenities,
         'Image_URL': imageUrl,
         'Location': location,
@@ -76,9 +87,9 @@ class HotelDetail {
   final int id;
   final String name;
   final String imageUrl;
-  final String price;
-  final String amenities; // Now a single string
-  final String location; // Added location
+  final int price; // Changed from double to int
+  final String amenities;
+  final String location;
   final List<Rating> ratings;
   final List<HotelBasic> relatedHotels;
 
@@ -88,7 +99,7 @@ class HotelDetail {
     required this.imageUrl,
     required this.price,
     required this.amenities,
-    required this.location, // Include location
+    required this.location,
     required this.ratings,
     required this.relatedHotels,
   });
@@ -96,12 +107,11 @@ class HotelDetail {
   factory HotelDetail.fromJson(Map<String, dynamic> json) {
     return HotelDetail(
       id: json['id'],
-      name: json['Hotel'],
+      name: sanitizeText(json['Hotel']),
       imageUrl: json['Image_URL'],
-      price: json['Price'],
-      // Directly store Amenities as a single string
-      amenities: (json['Amenities'] as String?)?.trim() ?? '',
-      location: json['Location'] ?? '', // Parse location
+      price: sanitizeAndParsePrice(json['Price']), // Parse price as int
+      amenities: sanitizeText(json['Amenities'] ?? ''),
+      location: sanitizeText(json['Location'] ?? ''),
       ratings: (json['ratings'] as List<dynamic>?)
               ?.map((r) => Rating.fromJson(r))
               .toList() ??
@@ -129,10 +139,10 @@ class Rating {
 
   factory Rating.fromJson(Map<String, dynamic> json) {
     return Rating(
-      username: json['user']['username'],
+      username: sanitizeText(json['user']['username']),
       rating: (json['rating'] as num).toDouble(),
-      review: json['review'],
-      createdAt: json['created_at'],
+      review: sanitizeText(json['review']),
+      createdAt: sanitizeText(json['created_at']),
     );
   }
 }
@@ -141,7 +151,7 @@ class HotelBasic {
   final int id;
   final String name;
   final String imageUrl;
-  final String price;
+  final int price; // Changed from double to int
 
   HotelBasic({
     required this.id,
@@ -153,9 +163,9 @@ class HotelBasic {
   factory HotelBasic.fromJson(Map<String, dynamic> json) {
     return HotelBasic(
       id: json['id'],
-      name: json['Hotel'],
+      name: sanitizeText(json['Hotel']),
       imageUrl: json['Image_URL'],
-      price: json['Price'],
+      price: sanitizeAndParsePrice(json['Price']), // Parse price as int
     );
   }
 }

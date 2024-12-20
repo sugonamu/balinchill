@@ -136,7 +136,7 @@ class _HotelDetailPageState extends State<HotelDetailPage> {
 
                       // Price
                       Text(
-                        'Price: ${cleanText(hotelDetail.price)}',
+                        'Price: Rp ${hotelDetail.price.toInt()}', // Display price as integer
                         style: const TextStyle(
                           fontSize: 24.0,
                           color: Color(0xFFB89B7C), // Muted brown
