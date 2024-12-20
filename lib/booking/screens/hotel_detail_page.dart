@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:balinchill/booking/models/booking.dart'; // Ensure correct import path
 import 'package:balinchill/payment/screens/payment_page.dart'; // Ensure correct import path
-
+import 'package:balinchill/rating/screens/addrating.dart'; 
 class HotelDetailPage extends StatefulWidget {
   final int hotelId;
 
@@ -169,49 +169,93 @@ class _HotelDetailPageState extends State<HotelDetailPage> {
                       ),
                       const SizedBox(height: 20.0),
 
-                      // Ratings & Reviews
-                      const Text(
-                        'Ratings & Reviews',
-                        style: TextStyle(
-                          fontSize: 24,
-                          color: Color(0xFF997A57), // Rich tan
-                        ),
+                                           // Ratings & Reviews
+                    const Text(
+                      'Ratings & Reviews',
+                      style: TextStyle(
+                        fontSize: 24,
+                        color: Color(0xFF997A57), // Rich tan
                       ),
-                      const SizedBox(height: 16.0),
-                      if (hotelDetail.ratings.isNotEmpty)
-                        ListView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: hotelDetail.ratings.length,
-                          itemBuilder: (context, index) {
-                            final rating = hotelDetail.ratings[index];
-                            return Padding(
-                              padding: const EdgeInsets.only(bottom: 8.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    '${rating.username}: ⭐ ${rating.rating} - ${rating.review}',
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Color(0xFF997A57), // Rich tan
-                                    ),
+                    ),
+                    const SizedBox(height: 16.0),
+                    if (hotelDetail.ratings.isNotEmpty)
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: hotelDetail.ratings.length,
+                        itemBuilder: (context, index) {
+                          final rating = hotelDetail.ratings[index];
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 16.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // Star Rating Row
+                                Row(
+                                  children: List.generate(5, (starIndex) {
+                                    return Icon(
+                                      Icons.star,
+                                      color: starIndex < rating.rating ? Colors.amber : Colors.grey,
+                                      size: 20,
+                                    );
+                                  }),
+                                ),
+                                const SizedBox(height: 8.0),
+
+                                // Username and Created Date
+                                Text(
+                                  '${rating.username} - ${rating.createdAt}',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF997A57), // Rich tan
                                   ),
-                                  Text(
-                                    rating.createdAt,
-                                    style: const TextStyle(color: Color(0xFFB89B7C)), // Muted brown
+                                ),
+                                const SizedBox(height: 4.0),
+
+                                // Review Text
+                                Text(
+                                  rating.review,
+                                  style: const TextStyle(
+                                    color: Color(0xFFB89B7C), // Muted brown
                                   ),
-                                ],
-                              ),
-                            );
-                          },
-                        )
-                      else
-                        const Text(
-                          'No ratings yet. Be the first to leave a review!',
-                          style: TextStyle(color: Color(0xFFB89B7C)), // Muted brown
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      )
+                    else
+                      const Text(
+                        'No ratings yet. Be the first to leave a review!',
+                        style: TextStyle(color: Color(0xFFB89B7C)), // Muted brown
+                      ),
+                    const SizedBox(height: 20.0),
+
+                    // Add Review Button
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF997A57), // Rich tan
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
                         ),
-                      const SizedBox(height: 40.0),
+                        foregroundColor: Colors.white, // Button text white
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => AddRatingPage(hotelId: hotelDetail.id),
+                          ),
+                        ).then((_) {
+                          // Refresh hotel details after returning
+                          setState(() {
+                            _hotelDetailFuture = fetchHotelDetail(widget.hotelId);
+                          });
+                        });
+                      },
+                      child: const Text('Add Review'),
+                    ),
+
 
                       // Related Hotels Nearby
                       const Text(

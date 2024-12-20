@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:balinchill/services/api_service.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart'; 
-import 'package:provider/provider.dart'; 
 import 'package:balinchill/env.dart';
+
 class AddRatingPage extends StatefulWidget {
   final int hotelId;
 
@@ -13,58 +13,86 @@ class AddRatingPage extends StatefulWidget {
 }
 
 class _AddRatingPageState extends State<AddRatingPage> {
-  final _ratingController = TextEditingController();
+  int _selectedRating = 0; // Store the selected rating
   final _reviewController = TextEditingController();
 
-  late ApiService apiService; // Declare apiService
+  late final CookieRequest request;
+  late final ApiService apiService;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // Initialize the CookieRequest and ApiService here
+    request = CookieRequest();
+    apiService = ApiService(baseUrl: Env.backendUrl, request: request);
+  }
 
   // Function to add rating
-  void _submitRating() async {
-    final rating = int.tryParse(_ratingController.text) ?? 0;
+  Future<void> _submitRating() async {
     final review = _reviewController.text;
 
-    if (rating >= 1 && rating <= 5 && review.isNotEmpty) {
+    if (_selectedRating >= 1 && _selectedRating <= 5 && review.isNotEmpty) {
       try {
         // Call addRating from ApiService
-        await apiService.addRating(widget.hotelId, rating, review);
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Rating added successfully')));
-        Navigator.pop(context);  // Go back to the previous screen
+        await apiService.addRating(widget.hotelId, _selectedRating, review);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Rating added successfully')),
+        );
+        Navigator.pop(context); // Go back to the previous screen
       } catch (e) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to add rating')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to add rating')),
+        );
       }
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please provide a valid rating and review')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please provide a valid rating and review')),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    // Get the request (CookieRequest) from the context
-    final request = context.watch<CookieRequest>(); 
-
-    // Initialize the ApiService with the baseUrl and request
-    apiService = ApiService(baseUrl: '${Env.backendUrl}', request: request);
-
     return Scaffold(
-      appBar: AppBar(title: Text('Add Rating')),
+      appBar: AppBar(title: const Text('Add Rating')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TextField(
-              controller: _ratingController,
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(labelText: 'Rating (1-5)'),
+            const Text(
+              'Select Rating:',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
+            const SizedBox(height: 8.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: List.generate(5, (index) {
+                return IconButton(
+                  icon: Icon(
+                    Icons.star,
+                    color: index < _selectedRating
+                        ? Colors.amber
+                        : Colors.grey,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _selectedRating = index + 1; // Update selected rating
+                    });
+                  },
+                );
+              }),
+            ),
+            const SizedBox(height: 16.0),
             TextField(
               controller: _reviewController,
-              decoration: InputDecoration(labelText: 'Review'),
+              decoration: const InputDecoration(labelText: 'Review'),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: _submitRating,
-              child: Text('Submit Rating'),
+              child: const Text('Submit Rating'),
             ),
           ],
         ),

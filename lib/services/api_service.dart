@@ -65,9 +65,12 @@ class ApiService {
     List jsonData = response['ratings'];
     return jsonData.map((rating) => Rating.fromJson(rating)).toList();
   }
+Future<void> addRating(int hotelId, int ratingValue, String review) async {
+  try {
+    print('Adding rating to: ${Env.backendUrl}/api/hotels/$hotelId/add-rating/');
+    print('Payload: rating=$ratingValue, review=$review');
+    print('Request Headers: ${request.headers}'); // Log headers
 
-  // Add a rating for a specific hotel
-  Future<void> addRating(int hotelId, int ratingValue, String review) async {
     final response = await request.post(
       '${Env.backendUrl}/api/hotels/$hotelId/add-rating/',
       {
@@ -76,10 +79,17 @@ class ApiService {
       },
     );
 
-    if (response == null) {
-      throw Exception('Failed to add rating');
+    if (response == null || response['status'] != 'success') {
+      throw Exception('Failed to add rating: ${response?.toString()}');
     }
+  } catch (e) {
+    print('Error adding rating: $e');
+    throw Exception('Failed to add rating');
   }
+}
+
+
+
 
   // Logout functionality
   Future<void> logout() async {
