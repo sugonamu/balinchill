@@ -150,7 +150,7 @@ class _HotelDetailPageState extends State<HotelDetailPage> {
                             MaterialPageRoute(
                               builder: (context) => PaymentPage(
                                 hotelId: hotelDetail.id,
-                                price: hotelDetail.price,
+                                price: hotelDetail.price.toString(),
                               ),
                             ),
                           );
