@@ -120,7 +120,7 @@ class _LoginPageState extends State<LoginPage> {
                             if (request.loggedIn) {
                               String message = response['message'] ?? 'No message provided';
                               String uname = response['username'] ?? 'Unknown user';
-                              String role = widget.selectedRole ?? '';
+                              String role = response['role'] ?? '';
 
                               if (context.mounted) {
                                 print("Response: $response");

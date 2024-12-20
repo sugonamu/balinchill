@@ -71,7 +71,6 @@ class _AddRatingPageState extends State<AddRatingPage> {
                         'rating': _selectedRating.toString(),
                         'review': review,
                       },
-                    
                     );
 
                     if (response['status'] == 'success') {
