@@ -6,11 +6,12 @@ import 'package:balinchill/widgets/guest_left_drawer.dart';
 import 'package:balinchill/services/api_service.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
-import 'package:balinchill/booking/models/booking.dart'; 
+import 'package:balinchill/booking/models/booking.dart';
 import 'hotel_detail_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
+
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -47,12 +48,10 @@ class _HomePageState extends State<HomePage> {
     }).toList();
 
     filtered.sort((a, b) {
-      final aPrice = double.tryParse(a.price.replaceAll(RegExp('[^0-9.]'), '')) ?? 0.0;
-      final bPrice = double.tryParse(b.price.replaceAll(RegExp('[^0-9.]'), '')) ?? 0.0;
       if (_selectedSortOption == 'Low to High') {
-        return aPrice.compareTo(bPrice);
+        return a.price.compareTo(b.price);
       } else {
-        return bPrice.compareTo(aPrice);
+        return b.price.compareTo(a.price);
       }
     });
 
@@ -113,8 +112,10 @@ class _HomePageState extends State<HomePage> {
                     ),
                     child: Row(
                       children: [
-                        const Text('Sort by Price: ',
-                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+                        const Text(
+                          'Sort by Price: ',
+                          style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                        ),
                         DropdownButtonHideUnderline(
                           child: DropdownButton<String>(
                             value: _selectedSortOption,
@@ -176,13 +177,15 @@ class _HomePageState extends State<HomePage> {
                           children: [
                             Expanded(
                               child: ClipRRect(
-                                borderRadius: const BorderRadius.vertical(top: Radius.circular(8.0)),
+                                borderRadius:
+                                    const BorderRadius.vertical(top: Radius.circular(8.0)),
                                 child: Image.network(
                                   proxiedImageUrl,
                                   width: double.infinity,
                                   fit: BoxFit.cover,
                                   errorBuilder: (context, error, stackTrace) {
-                                    return Image.asset('assets/images/No_image.jpg', fit: BoxFit.cover);
+                                    return Image.asset('assets/images/No_image.jpg',
+                                        fit: BoxFit.cover);
                                   },
                                 ),
                               ),
@@ -198,12 +201,14 @@ class _HomePageState extends State<HomePage> {
                                   ),
                                   const SizedBox(height: 4.0),
                                   Text(
-                                    hotel.price,
+                                    'Rp ${hotel.price.toInt()}', // Removed decimals
                                     style: const TextStyle(fontSize: 14, color: Colors.grey),
                                   ),
                                   const SizedBox(height: 8.0),
                                   ElevatedButton(
                                     style: ElevatedButton.styleFrom(
+                                      backgroundColor: const Color(0xFF997A57), // Button color
+                                      foregroundColor: Colors.white, // Text color
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(8.0),
                                       ),

@@ -47,6 +47,11 @@ class _HotelDetailPageState extends State<HotelDetailPage> {
     return 'http://127.0.0.1:8000/proxy-image/?url=${Uri.encodeComponent(originalUrl)}';
   }
 
+  String cleanText(String text) {
+    // Remove unwanted characters like Â and trim spaces
+    return text.replaceAll('Â', '').trim();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -100,7 +105,7 @@ class _HotelDetailPageState extends State<HotelDetailPage> {
 
                       // Hotel Name
                       Text(
-                        hotelDetail.name,
+                        cleanText(hotelDetail.name),
                         style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 32,
@@ -120,7 +125,7 @@ class _HotelDetailPageState extends State<HotelDetailPage> {
                         ),
                         const SizedBox(height: 8.0),
                         Text(
-                          hotelDetail.amenities,
+                          cleanText(hotelDetail.amenities),
                           style: const TextStyle(
                             color: Color(0xFFB89B7C), // Muted brown
                             fontSize: 16.0,
@@ -156,7 +161,7 @@ class _HotelDetailPageState extends State<HotelDetailPage> {
 
                       // Price
                       Text(
-                        'Price: ${hotelDetail.price}',
+                        'Price: Rp ${hotelDetail.price.toInt()}', // Display price as integer
                         style: const TextStyle(
                           fontSize: 24.0,
                           color: Color(0xFFB89B7C), // Muted brown
@@ -240,7 +245,7 @@ class _HotelDetailPageState extends State<HotelDetailPage> {
                                   ),
                                   const SizedBox(height: 8.0),
                                   Text(
-                                    relatedHotel.name,
+                                    cleanText(relatedHotel.name),
                                     style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                       color: Color(0xFF997A57), // Rich tan
