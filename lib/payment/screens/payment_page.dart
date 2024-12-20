@@ -1,58 +1,28 @@
+import 'package:balinchill/env.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:balinchill/booking/models/booking.dart'; // Ensure correct import path
 
 class PaymentPage extends StatefulWidget {
+  final int hotelId;
+  final String price;
 
-  const PaymentPage({Key? key}) : super(key: key);
+  const PaymentPage({Key? key, required this.hotelId, required this.price}) : super(key: key);
 
   @override
-  State<PaymentPage> createState() => _PaymentPageState();
+  _PaymentPageState createState() => _PaymentPageState();
 }
 
 class _PaymentPageState extends State<PaymentPage> {
-  // late TextEditingController _phoneNumberController;
-  // late TextEditingController _creditCardNumberController;
-  // late TextEditingController _validThruController;
-  // late TextEditingController _cvvController;
-  // late TextEditingController _cardNameController;
-  // String? _selectedImage;
-
-  
-
-  @override
-  void initState() {
-    super.initState();
-    // _usernameController = TextEditingController(text: widget.profile.fields.user.username);
-    // _emailController = TextEditingController(text: widget.profile.fields.user.email);
-    // _firstNameController = TextEditingController(text: widget.profile.fields.user.firstName);
-    // _lastNameController = TextEditingController(text: widget.profile.fields.user.lastName);
-    // _selectedImage = widget.profile.fields.image;
-  }
-
-  // Future<void> _updateProfile(CookieRequest request) async {
-  //   final response = await request.post(
-  //     'http://127.0.0.1:8000/users/update_profile_flutter/',
-  //     {
-  //       'username': _usernameController.text,
-  //       'email': _emailController.text,
-  //       'first_name': _firstNameController.text,
-  //       'last_name': _lastNameController.text,
-  //       'image': _selectedImage,
-  //     },
-  //   );
-
-  //   if (response['status'] == 'success') {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       const SnackBar(content: Text('Profile updated successfully')),
-  //     );
-  //     Navigator.pop(context);
-  //   } else {
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(content: Text('Error: ${response['message']}')),
-  //     );
-  //   }
-  // }
+  final TextEditingController _fullNameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _mobileNumberController = TextEditingController();
+  final TextEditingController _creditCardNumberController = TextEditingController();
+  final TextEditingController _validThruController = TextEditingController();
+  final TextEditingController _cvvController = TextEditingController();
+  final TextEditingController _cardNameController = TextEditingController();
+  final TextEditingController _bookingDateController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -61,81 +31,73 @@ class _PaymentPageState extends State<PaymentPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Payment Page'),
-        backgroundColor: const Color(0xFFB89576),
       ),
-      body: SingleChildScrollView(
+      body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            // User information fields
             TextField(
-              // controller: _usernameController,
+              controller: _fullNameController,
               decoration: const InputDecoration(labelText: 'Full Name'),
             ),
             TextField(
-              // controller: _emailController,
+              controller: _emailController,
               decoration: const InputDecoration(labelText: 'Email'),
             ),
             TextField(
-              // controller: _firstNameController,
+              controller: _mobileNumberController,
               decoration: const InputDecoration(labelText: 'Mobile Number'),
             ),
             TextField(
-              // controller: _lastNameController,
+              controller: _creditCardNumberController,
               decoration: const InputDecoration(labelText: 'Credit Card Number'),
             ),
             TextField(
-              // controller: _lastNameController,
-              decoration: const InputDecoration(labelText: 'Valid Thru'),
+              controller: _validThruController,
+              decoration: const InputDecoration(labelText: 'Valid Thru (MM/YY)'),
             ),
             TextField(
-              // controller: _lastNameController,
-              decoration: const InputDecoration(labelText: 'CVV/CVN'),
+              controller: _cvvController,
+              decoration: const InputDecoration(labelText: 'CVV'),
             ),
             TextField(
-              // controller: _lastNameController,
-              decoration: const InputDecoration(labelText: 'Name on Card'),
+              controller: _cardNameController,
+              decoration: const InputDecoration(labelText: 'Card Name'),
             ),
-            const SizedBox(height: 16),
-            // Image selection
-            // Wrap(
-            //   spacing: 8.0,
-            //   children: _availableImages.map((imagePath) {
-            //     return GestureDetector(
-            //       onTap: () {
-            //         setState(() {
-            //           _selectedImage = imagePath;
-            //         });
-            //       },
-            //       child: Container(
-            //         decoration: BoxDecoration(
-            //           border: Border.all(
-            //             color: _selectedImage == imagePath ? Colors.blue : Colors.grey,
-            //           ),
-            //         ),
-            //         child: Image.network(
-            //         'http://127.0.0.1:8000/media/$imagePath',
-            //           width: 80,
-            //           height: 80,
-            //           errorBuilder: (context, error, stackTrace) {
-            //             return const Icon(Icons.error);
-            //           },
-            //         ),
-            //       ),
-            //     );
-            //   }).toList(),
-            // ),
-            const SizedBox(height: 16),
-            // Save button
+            TextField(
+              controller: _bookingDateController,
+              decoration: const InputDecoration(labelText: 'Booking Date (YYYY-MM-DD)'),
+            ),
+            const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () => {},
-              style: ElevatedButton.styleFrom(
-                foregroundColor: Colors.white,
-                backgroundColor: const Color(0xFFB89576),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
+              onPressed: () async {
+                final response = await request.post(
+                  'http://127.0.0.1:8000/payment/process-payment/',
+                  {
+                    'full_name': _fullNameController.text,
+                    'email': _emailController.text,
+                    'mobile_number': _mobileNumberController.text,
+                    'credit_card_number': _creditCardNumberController.text,
+                    'valid_thru': _validThruController.text,
+                    'cvv': _cvvController.text,
+                    'card_name': _cardNameController.text,
+                    'booking_date': _bookingDateController.text,
+                    'hotel_id': widget.hotelId.toString(),
+                    'price': widget.price,
+                  },
+                );
+
+                if (response['status'] == 'success') {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('${response['message']}\nTransaction ID: ${response['transaction_id']}')),
+                  );
+                  Navigator.pop(context);
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text(response['message'])),
+                  );
+                }
+              },
               child: const Text('Submit Payment'),
             ),
           ],

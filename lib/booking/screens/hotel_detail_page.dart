@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:balinchill/booking/models/booking.dart'; // Ensure correct import path
+import 'package:balinchill/payment/screens/payment_page.dart'; // Ensure correct import path
 
 class HotelDetailPage extends StatefulWidget {
   final int hotelId;
@@ -128,6 +129,30 @@ class _HotelDetailPageState extends State<HotelDetailPage> {
                         ),
                         const SizedBox(height: 16.0),
                       ],
+
+                      // Book Hotel Button
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF997A57), // Rich tan
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          foregroundColor: Colors.white, // Button text white
+                        ),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => PaymentPage(
+                                hotelId: hotelDetail.id,
+                                price: hotelDetail.price,
+                              ),
+                            ),
+                          );
+                        },
+                        child: const Text('Book Hotel'),
+                      ),
+                      const SizedBox(height: 20.0),
 
                       // Price
                       Text(

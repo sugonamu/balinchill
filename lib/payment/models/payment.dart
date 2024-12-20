@@ -62,3 +62,43 @@ class Transaction {
         "status": status,
       };
 }
+
+class PaymentProfile {
+  final int id;
+  final String user;
+  final String phoneNumber;
+  final String creditCardNumber;
+  final String validThru;
+  final String cvv;
+  final String cardName;
+
+  PaymentProfile({
+    required this.id,
+    required this.user,
+    required this.phoneNumber,
+    required this.creditCardNumber,
+    required this.validThru,
+    required this.cvv,
+    required this.cardName,
+  });
+
+  factory PaymentProfile.fromJson(Map<String, dynamic> json) => PaymentProfile(
+        id: json["id"],
+        user: json["user"],
+        phoneNumber: json["phone_number"],
+        creditCardNumber: json["credit_card_number"],
+        validThru: json["valid_thru"],
+        cvv: json["cvv"],
+        cardName: json["card_name"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "user": user,
+        "phone_number": phoneNumber,
+        "credit_card_number": creditCardNumber,
+        "valid_thru": validThru,
+        "cvv": cvv,
+        "card_name": cardName,
+      };
+}
