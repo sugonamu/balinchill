@@ -88,8 +88,18 @@ This application integrates a Flutter mobile frontend with a Django backend web 
 
 **Authentication**
 
-***Feature***: Display a registration form for new users to create an account and a login form for existing users to enter their username and password to access their accounts.
+***1. Login*** 
+***Feature***: Display a login form for existing users to enter their username and password to access their accounts.
 
 ***API Endpoint***: POST /auth/login/
 
-***Description***: Allows users to log in by providing their username and password. Validates credentials and returns a response indicating success or failure.
+***Description***: This endpoint handles user login. The LoginPage in login.dart sends a POST request with the user's credentials (username and password) to this endpoint.
+
+***2. Register*** 
+***Feature***: Display a registration form for new users to create an account.
+
+***API Endpoint***: POST /auth/register/
+
+***Description***: This endpoint allows users to create a new account by providing their username, password, and role. The registration process validates the inputs, including password confirmation and role selection. Upon successful registration, the user is notified and redirected to the login page.
+
+ 
