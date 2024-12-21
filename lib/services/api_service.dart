@@ -121,7 +121,7 @@ class ApiService {
   // Add a property for the logged-in host
   Future<void> addProperty(Property property) async {
     final response = await request.post(
-      '${Env.backendUrl}/addproperty/',
+      '${Env.backendUrl}/add_property/',
       property.toJson(),
     );
 
@@ -263,5 +263,47 @@ class ApiService {
 
     return response;
   }
+  Future<Map<String, dynamic>> editProperty(
+    String propertyId,
+    String hotel,
+    String category,
+    String address,
+    String contact,
+    String price,
+    String amenities,
+    String imageUrl,
+    String location,
+    String pageUrl,
+  ) async {
+    final response = await request.postJson(
+      "${Env.backendUrl}/edit_property_api/",
+      jsonEncode({
+        "id": propertyId,
+        "Hotel": hotel,
+        "Category": category,
+        "Address": address,
+        "Contact": contact,
+        "Price": price,
+        "Amenities": amenities,
+        "Image_URL": imageUrl,
+        "Location": location,
+        "Page_URL": pageUrl,
+      }),
+    );
 
+    if (response == null) {
+      throw Exception('Failed to edit property');
+    }
+
+    return response;
+  }
+  Future<Property> getPropertyDetails(String propertyId) async {
+    final response = await request.get('${Env.backendUrl}/property/$propertyId/');
+
+    if (response == null) {
+      throw Exception('Failed to load property details');
+    }
+
+    return Property.fromJson(response);
+  }
 }

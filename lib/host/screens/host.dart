@@ -1,4 +1,6 @@
 import 'package:balinchill/host/screens/addproperty.dart';
+import 'package:balinchill/host/screens/edit_property.dart';
+import 'package:balinchill/host/screens/property_details.dart'; // Import the PropertyDetailsPage
 import 'package:flutter/material.dart';
 import 'package:balinchill/host/models/property.dart';
 import 'package:provider/provider.dart';
@@ -50,6 +52,7 @@ class _HostDashboardPageState extends State<HostDashboardPage> {
               separatorBuilder: (context, index) => Divider(),
               itemBuilder: (context, index) {
                 final property = properties[index];
+                final proxiedImageUrl = apiService.getProxyImageUrl(property.imageUrl);
                 return Card(
                   elevation: 5,
                   margin: EdgeInsets.symmetric(vertical: 8),
@@ -71,8 +74,11 @@ class _HostDashboardPageState extends State<HostDashboardPage> {
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(10),
                                 image: DecorationImage(
-                                  image: NetworkImage(property.imageUrl),
+                                  image: NetworkImage(proxiedImageUrl),
                                   fit: BoxFit.cover,
+                                  onError: (error, stackTrace) {
+                                    // Handle the error by setting a placeholder image
+                                  },
                                 ),
                               ),
                             ),
@@ -91,7 +97,7 @@ class _HostDashboardPageState extends State<HostDashboardPage> {
                                   ),
                                   SizedBox(height: 5),
                                   Text('Category: ${property.category}'),
-                                  Text('Price: \$${property.price}'),
+                                  Text('Price: \Rp${property.price}'),
                                   Text('Address: ${property.address}'),
                                 ],
                               ),
@@ -107,9 +113,28 @@ class _HostDashboardPageState extends State<HostDashboardPage> {
                           children: [
                             TextButton(
                               onPressed: () {
-                                // Action for page URL
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => PropertyDetailsPage(propertyId: property.id),
+                                  ),
+                                );
                               },
                               child: Text('View More Details'),
+                            ),
+                            IconButton(
+                              icon: Icon(Icons.edit, color: Colors.blue),
+                              onPressed: () async {
+                                final result = await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => EditPropertyPage(propertyId: property.id),
+                                  ),
+                                );
+                                if (result == true) {
+                                  setState(() {}); // Refresh the properties list
+                                }
+                              },
                             ),
                             IconButton(
                               icon: Icon(Icons.delete, color: Colors.red),
