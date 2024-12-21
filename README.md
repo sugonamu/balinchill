@@ -123,3 +123,34 @@ This application integrates a Flutter mobile frontend with a Django backend web 
 
 **Description**: This endpoint submits a rating to a property. The `addrating` page in `addrating.dart` will send a POST request with the review and rating data to that endpoint. If successful, the rating and review will appear in the `HotelDetailPage`, and the average rating in the `HomePage` of that hotel will update.
 
+
+**Role Login Feature**
+### 1. Users Register as a Guest or Host
+
+**API Endpoint**: `POST /auth/register/`
+
+**Feature**: When creating an account, the user will either register as a guest or a host
+
+**Description**: This registration page allows users to create an account with the choice of two roles: Guest or Host. The user provides their username, password, and confirms the password. Upon submission, the user is required to select one of the roles from a dropdown list. If the selected role is not provided, the user will be prompted to choose a role. Once the form is completed and submitted, the API service sends the registration request to the backend. Upon successful registration, the user is navigated to the login page. If registration fails, an error message is displayed.
+
+**Host Dashboard Feature**
+
+### 1. Add Property
+**API Endpoint**: `POST /add_property/`
+
+**Feature**: Add a Property onto the Host Dashboard
+
+**Description**: This endpoint allows hosts to add a new property to their dashboard. The AddPropertyPage in addproperty.dart sends a POST request containing property details (such as hotel name, category, price, address, and amenities) to this endpoint. Upon successful submission, the new property will appear on the host dashboard, and users can view it in relevant listings. If the submission fails, an error message is displayed to the host.
+
+### 2. Delete Property
+**API Endpoint**: `POST /delete/{property-id}/`
+
+**Feature**: Delete a Property on the Host Dashboard
+
+**Description**: This endpoint deletes a property from the host dashboard. The HostDashboardPage in host.dart sends a POST request to delete a property by its unique property_id. When the delete button is pressed, a confirmation dialog appears. If confirmed, the property is removed from the database, and the list of properties refreshes. A success or error message is displayed based on the outcome.
+
+### 3. Edit Property
+**API Endpoint**: `POST /edit_property_api/`
+
+**Feature**: Edit a selected Property on the Host Dashboard
+**Description**: This endpoint updates the details of an existing property. The EditPropertyPage in editproperty.dart sends a POST request containing the updated property data (hotel name, category, price, address, and amenities) to this endpoint. The property is identified by its unique property_id. If the update is successful, the modified property details will reflect on the host dashboard and listing pages. If the property is not found or unauthorized, an error message is shown.
