@@ -1,4 +1,5 @@
 import 'package:balinchill/env.dart';
+import 'package:balinchill/widgets/host_navbar.dart';
 import 'package:flutter/material.dart';
 import 'package:balinchill/host/models/property.dart';
 import 'package:balinchill/services/api_service.dart';
@@ -73,6 +74,12 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Add Property'),
+        backgroundColor: const Color(0xFFB89576), 
+        elevation: 4,
+      ),
+        bottomNavigationBar: Navbar(
+        apiService: apiService,
+        currentIndex: 1, // add
       ),
       body: Padding(
         padding: EdgeInsets.all(16.0),

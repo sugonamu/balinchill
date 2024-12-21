@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:balinchill/services/api_service.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:balinchill/env.dart';
-import 'package:balinchill/widgets/host_left_drawer.dart'; // Import the LeftDrawer
+import 'package:balinchill/widgets/host_navbar.dart'; // Import the LeftDrawer
 
 class HostDashboardPage extends StatefulWidget {
   @override
@@ -27,7 +27,10 @@ class _HostDashboardPageState extends State<HostDashboardPage> {
         title: Text('My Properties'),
         backgroundColor: Color(0xFFB89576),
       ),
-      drawer: LeftDrawer(apiService: apiService), // Add the drawer here
+      bottomNavigationBar: Navbar(
+        apiService: apiService,
+        currentIndex: 0, // add
+      ),
       body: FutureBuilder<List<Property>>(
         future: apiService.getHostProperties(),
         builder: (context, snapshot) {

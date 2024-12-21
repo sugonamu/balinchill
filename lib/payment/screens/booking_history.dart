@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import '../models/payment.dart';
 import '../../booking/models/booking.dart'; // Import the Hotel model
 import '../../services/api_service.dart'; // Import ApiService
+import 'package:balinchill/widgets/guest_navbar.dart'; // add
 
 class BookingHistoryPage extends StatefulWidget {
   @override
@@ -141,6 +142,10 @@ class _BookingHistoryPageState extends State<BookingHistoryPage> {
                         },
                       ),
                     ),
+      bottomNavigationBar: Navbar(
+        apiService: _apiService,
+        currentIndex: 1, // example index
+      ),
     );
   }
 }

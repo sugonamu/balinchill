@@ -1,6 +1,6 @@
 import 'package:balinchill/env.dart';
 import 'package:flutter/material.dart';
-import 'package:balinchill/widgets/guest_left_drawer.dart';
+import 'package:balinchill/widgets/guest_navbar.dart';
 import 'package:balinchill/services/api_service.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
@@ -112,6 +112,8 @@ class _HomePageState extends State<HomePage> {
     final request = context.watch<CookieRequest>();
     final backgroundColor = const Color(0xFFF5F0E1);
 
+    final apiService = ApiService(baseUrl: Env.backendUrl, request: context.read<CookieRequest>());
+
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: backgroundColor,
@@ -120,7 +122,10 @@ class _HomePageState extends State<HomePage> {
         title: const Text('Home Page', style: TextStyle(color: Colors.white)),
         centerTitle: true,
       ),
-      drawer: LeftDrawer(apiService: ApiService(baseUrl: Env.backendUrl, request: request)),
+      bottomNavigationBar: Navbar(
+        apiService: apiService,
+        currentIndex: 0, // add
+      ),      
       body: SafeArea(
         child: Column(
           children: [
