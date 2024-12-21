@@ -1,5 +1,8 @@
 # Miscellaneous
 *.class
+*.jks
+*.keystore
+
 *.log
 *.pyc
 *.swp
