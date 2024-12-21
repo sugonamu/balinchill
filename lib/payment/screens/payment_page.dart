@@ -31,8 +31,9 @@ class _PaymentPageState extends State<PaymentPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Payment Page'),
-      ),
+        backgroundColor: const Color(0xFF997A57), // Tan color
+        title: const Text('Payment Page', style: TextStyle(color: Colors.white)),
+        centerTitle: true,),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

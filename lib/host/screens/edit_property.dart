@@ -97,9 +97,9 @@ class _EditPropertyPageState extends State<EditPropertyPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Edit Property'),
-        backgroundColor: Color(0xFFB89576),
-      ),
+        backgroundColor: const Color(0xFF997A57), // Tan color
+        title: const Text('Edit Property', style: TextStyle(color: Colors.white)),
+        centerTitle: true,      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(

@@ -73,9 +73,9 @@ class _AddPropertyPageState extends State<AddPropertyPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Add Property'),
-        backgroundColor: const Color(0xFFB89576), 
-        elevation: 4,
+        backgroundColor: const Color(0xFF997A57), // Tan color
+        title: const Text('Add Property', style: TextStyle(color: Colors.white)),
+        centerTitle: true,
       ),
         bottomNavigationBar: Navbar(
         apiService: apiService,

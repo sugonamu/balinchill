@@ -24,9 +24,9 @@ class _ProfilePageState extends State<ProfilePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('User Profile', style: TextStyle(fontWeight: FontWeight.bold)),
-        backgroundColor: const Color(0xFFB89576), 
-        elevation: 4,
+        backgroundColor: const Color(0xFF997A57), // Tan color
+        title: const Text('Profile', style: TextStyle(color: Colors.white)),
+        centerTitle: true,
       ),
       bottomNavigationBar: Navbar(apiService: apiService, currentIndex: 2), 
       body: FutureBuilder<Profile>(

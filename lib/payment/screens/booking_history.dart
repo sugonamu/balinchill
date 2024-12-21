@@ -69,7 +69,9 @@ class _BookingHistoryPageState extends State<BookingHistoryPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Booking History'),
+        backgroundColor: const Color(0xFF997A57), // Tan color
+        title: const Text('History', style: TextStyle(color: Colors.white)),
+        centerTitle: true,
       ),
       body: _isLoading
           ? Center(child: CircularProgressIndicator())

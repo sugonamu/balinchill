@@ -59,10 +59,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit Profile', style: TextStyle(fontWeight: FontWeight.bold)),
-        backgroundColor: const Color(0xFFB89576), // Facebook blue
-        elevation: 2,
-        actions: [
+        backgroundColor: const Color(0xFF997A57), // Tan color
+        title: const Text('Edit Profile', style: TextStyle(color: Colors.white)),
+        centerTitle: true,        actions: [
           IconButton(
             icon: const Icon(Icons.check),
             onPressed: () => _updateProfile(),

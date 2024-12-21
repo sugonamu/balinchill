@@ -24,8 +24,9 @@ class _HostDashboardPageState extends State<HostDashboardPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('My Properties'),
-        backgroundColor: Color(0xFFB89576),
+        backgroundColor: const Color(0xFF997A57), // Tan color
+        title: const Text('Dashboard', style: TextStyle(color: Colors.white)),
+        centerTitle: true,
       ),
       bottomNavigationBar: Navbar(
         apiService: apiService,

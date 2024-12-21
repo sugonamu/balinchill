@@ -45,9 +45,9 @@ class _HotelDetailPageState extends State<HotelDetailPage> {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F3E6), // Light beige background
       appBar: AppBar(
-        backgroundColor: const Color(0xFF997A57), // Rich tan
-        title: const Text('Hotel Details', style: TextStyle(color: Colors.white)),
-      ),
+        backgroundColor: const Color(0xFF997A57), // Tan color
+        title: const Text('Hotel Detail', style: TextStyle(color: Colors.white)),
+        centerTitle: true,      ),
       body: FutureBuilder<HotelDetail>(
         future: _hotelDetailFuture,
         builder: (context, snapshot) {

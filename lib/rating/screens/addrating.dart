@@ -27,7 +27,7 @@ class _AddRatingPageState extends State<AddRatingPage> {
     return Scaffold(
       backgroundColor: backgroundColor,
       appBar: AppBar(
-        backgroundColor: primaryColor,
+        backgroundColor: const Color(0xFF997A57), // Tan color
         title: const Text('Add Rating', style: TextStyle(color: Colors.white)),
         centerTitle: true,
       ),

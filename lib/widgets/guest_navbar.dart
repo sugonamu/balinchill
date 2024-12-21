@@ -57,11 +57,33 @@ class Navbar extends StatelessWidget {
             );
             break;
           case 3:
-            apiService.logout();
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (context) => LoginPage()),
-              (Route<dynamic> route) => false,
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text('Confirm Logout'),
+                  content: Text('Are you sure you want to logout?'),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop(); // Close the dialog
+                      },
+                      child: Text('Cancel'),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        apiService.logout();
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(builder: (context) => LoginPage()),
+                          (Route<dynamic> route) => false,
+                        );
+                      },
+                      child: Text('Logout'),
+                    ),
+                  ],
+                );
+              },
             );
             break;
         }
