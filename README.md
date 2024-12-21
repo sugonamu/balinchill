@@ -103,3 +103,25 @@ This application integrates a Flutter mobile frontend with a Django backend web 
 ***Description***: This endpoint allows users to create a new account by providing their username, password, and role. The registration process validates the inputs, including password confirmation and role selection. Upon successful registration, the user is notified and redirected to the login page.
 
  
+**Rating Feature**
+
+
+***1. Viewing Rating for a Property***
+
+***Feature***: Display a list of ratings and reviews including who wrote the review and when it was posted
+
+***API Endpoint***: ```"GET /api/hotels/{hotel_id}``
+
+***Description***: This endpoint retrieves the details of a specific hotel including the rating. The HotelDetailPage in hotel_detail_page dart fetches the data using the fetchHotelDetail method.
+
+
+***2. Adding Rating for a Property***
+
+***API Endpoint***: ``` POST /api/hotels/{hotel_id}/add-rating/ ``
+
+***Feature***: Add a rating and review to a property. 
+
+***Description***: This endpoint submits a rating to a property. The addrating page in   ```addrating.dart```  will send a POST request with the review and rating data to that endpoint. If successful, the rating and review will appear in the HotelDetailPage and the average rating in the HomePage of that hotel, will update.
+
+
+
